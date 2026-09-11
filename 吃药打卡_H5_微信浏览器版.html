@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#f6f7fb">
+<title>吃药打卡</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:#f6f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB",Arial,sans-serif}
+body{padding-bottom:calc(28px + env(safe-area-inset-bottom))}
+button{font:inherit}
+.app{width:100%;max-width:680px;margin:0 auto;padding:18px 16px 0}
+.hero{background:linear-gradient(145deg,#ffffff 0%,#f0fff6 100%);border:1px solid #e8ecef;border-radius:24px;padding:22px 20px 20px;box-shadow:0 8px 28px rgba(20,32,50,.06)}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.title{font-size:25px;font-weight:800;letter-spacing:.2px}
+.badge{font-size:12px;padding:7px 10px;border-radius:999px;background:#e9fff2;color:#079447;font-weight:700;white-space:nowrap}
+.subtitle{margin:7px 0 17px;color:#697386;font-size:13px}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stat{background:#fff;border:1px solid #edf0f2;border-radius:16px;padding:13px 10px}
+.stat b{display:block;font-size:22px;line-height:1.1;margin-bottom:4px}
+.stat span{font-size:12px;color:#7b8493}
+.progress-wrap{margin-top:16px}
+.progress-head{display:flex;justify-content:space-between;font-size:13px;color:#5f6877;margin-bottom:8px}
+.progress{height:9px;background:#e9edf0;border-radius:999px;overflow:hidden}
+.bar{height:100%;width:0;background:#18b866;border-radius:999px;transition:width .25s ease}
+.next{margin-top:16px;border-radius:18px;background:#172033;color:#fff;padding:16px}
+.next small{display:block;color:#aeb8c8;font-size:12px;margin-bottom:5px}
+.next-main{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.next-title{font-size:16px;font-weight:700}
+.primary{border:0;background:#19bd69;color:#fff;padding:12px 16px;border-radius:13px;font-weight:800;min-width:106px;cursor:pointer;box-shadow:0 5px 14px rgba(25,189,105,.22)}
+.primary:active,.meal-btn:active{transform:scale(.97)}
+.primary:disabled{background:#667085;box-shadow:none}
+.section{margin-top:18px}
+.section-title{display:flex;align-items:end;justify-content:space-between;margin:0 2px 10px}
+.section-title h2{font-size:17px;margin:0}
+.section-title span{font-size:12px;color:#8992a1}
+.day{margin-bottom:13px}
+.day-head{display:flex;align-items:center;gap:8px;margin:14px 3px 7px}
+.day-head b{font-size:14px}
+.today-pill{font-size:11px;background:#e8fff1;color:#079447;padding:4px 7px;border-radius:999px;font-weight:700}
+.meal{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e9edf0;border-radius:18px;padding:12px;margin-bottom:8px;min-height:72px;box-shadow:0 4px 16px rgba(20,32,50,.035)}
+.meal.done{background:#f2fff7;border-color:#c9f1da}
+.dot{width:38px;height:38px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:#f1f4f7;font-size:20px;flex:0 0 38px}
+.done .dot{background:#d9f8e6}
+.meal-info{min-width:0;flex:1}
+.meal-name{font-size:15px;font-weight:750}
+.meal-meta{font-size:12px;color:#7c8593;margin-top:4px}
+.meal-status{font-size:12px;color:#18a45c;font-weight:700;margin-top:4px}
+.meal-btn{border:1px solid #dfe5ea;background:#fff;color:#172033;padding:10px 12px;border-radius:12px;font-size:13px;font-weight:750;cursor:pointer;min-width:92px}
+.meal-btn.done{background:#dff9e9;color:#078b45;border-color:#c6efd6}
+.locked{opacity:.58}
+.footer{margin:20px 2px 0;color:#9aa2af;font-size:11px;line-height:1.7;text-align:center}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(15px);background:rgba(23,32,51,.94);color:#fff;padding:10px 15px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.22s;z-index:20}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:390px){
+ .app{padding-left:12px;padding-right:12px}
+ .stats{gap:7px}.stat{padding:11px 8px}.stat b{font-size:20px}
+ .next-main{align-items:stretch;flex-direction:column}.primary{width:100%}
+ .meal{gap:9px}.meal-btn{min-width:84px;padding:9px 8px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="hero">
+    <div class="topline">
+      <div class="title">💊 吃药打卡</div>
+      <div class="badge">本机自动记忆</div>
+    </div>
+    <div class="subtitle">20 顿疗程 · 每天早晚各 1 次 · 2026.09.07 晚开始</div>
+
+    <div class="stats">
+      <div class="stat"><b id="doneCount">8</b><span>已吃</span></div>
+      <div class="stat"><b id="leftCount">12</b><span>剩余</span></div>
+      <div class="stat"><b id="percent">40%</b><span>完成度</span></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-head"><span>疗程进度</span><span id="progressText">8 / 20 顿</span></div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+    </div>
+
+    <div class="next">
+      <small>下一顿</small>
+      <div class="next-main">
+        <div class="next-title" id="nextTitle">🌙 9月11日 · 晚上</div>
+        <button class="primary" id="nextBtn" type="button">点击打卡</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <h2>时间轴</h2>
+      <span>每一顿独立记录</span>
+    </div>
+    <div id="timeline"></div>
+  </section>
+
+  <div class="footer">
+    记录保存在当前浏览器本机。<br>
+    已完成的历史记录不会因为刷新页面而消失。
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var STORAGE_KEY = "medicineTimelineH5_v3";
+  var TOTAL = 20;
+  var START = new Date(2026,8,7); // 2026-09-07
+  var TODAY = "2026-09-11";       // 按本次疗程页面确认的当前日期
+
+  var initial = INITIAL_RECORDS;
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(Array.isArray(parsed)) return parsed;
+      }
+    }catch(e){}
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+    return initial.slice();
+  }
+
+  function save(data){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+  }
+
+  function pad(n){ return n < 10 ? "0"+n : ""+n; }
+  function keyOf(date, period){
+    return date.getFullYear()+"-"+pad(date.getMonth()+1)+"-"+pad(date.getDate())+"-"+period;
+  }
+  function dateKey(date){
+    return date.getFullYear()+"-"+pad(date.getMonth()+1)+"-"+pad(date.getDate());
+  }
+  function fmtDate(date){
+    return (date.getMonth()+1)+"月"+date.getDate()+"日";
+  }
+
+  function buildPlan(){
+    var list = [];
+    var n = 0;
+    var d = new Date(START);
+    list.push({date:new Date(d),period:"night",label:"晚上",emoji:"🌙",key:keyOf(d,"night"),n:++n});
+    for(var i=1;i<10;i++){
+      d = new Date(START);
+      d.setDate(START.getDate()+i);
+      list.push({date:new Date(d),period:"morning",label:"早上",emoji:"🌅",key:keyOf(d,"morning"),n:++n});
+      list.push({date:new Date(d),period:"night",label:"晚上",emoji:"🌙",key:keyOf(d,"night"),n:++n});
+    }
+    return list;
+  }
+
+  var plan = buildPlan();
+
+  function toast(msg){
+    var el=document.getElementById("toast");
+    el.textContent=msg;
+    el.classList.add("show");
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer=setTimeout(function(){el.classList.remove("show");},1700);
+  }
+
+  function mark(key){
+    var data=load();
+    if(data.indexOf(key)>=0){
+      toast("这一顿已经记录过了");
+      return;
+    }
+    if(data.length>=TOTAL){
+      toast("20顿疗程已经完成 🎉");
+      return;
+    }
+    data.push(key);
+    save(data);
+    render();
+    toast("已记录这顿药 ✓");
+  }
+
+  function render(){
+    var data=load();
+    var doneCount=data.length;
+    var left=Math.max(0,TOTAL-doneCount);
+    var pct=Math.round(doneCount/TOTAL*100);
+
+    document.getElementById("doneCount").textContent=doneCount;
+    document.getElementById("leftCount").textContent=left;
+    document.getElementById("percent").textContent=pct+"%";
+    document.getElementById("progressText").textContent=doneCount+" / "+TOTAL+" 顿";
+    document.getElementById("bar").style.width=pct+"%";
+
+    var next=null;
+    for(var i=0;i<plan.length;i++){
+      if(data.indexOf(plan[i].key)<0){ next=plan[i]; break; }
+    }
+
+    var nextTitle=document.getElementById("nextTitle");
+    var nextBtn=document.getElementById("nextBtn");
+    if(next){
+      nextTitle.textContent=next.emoji+" "+fmtDate(next.date)+" · "+next.label;
+      nextBtn.disabled=false;
+      nextBtn.textContent="点击打卡";
+      nextBtn.onclick=function(){mark(next.key);};
+    }else{
+      nextTitle.textContent="🎉 20顿全部完成";
+      nextBtn.disabled=true;
+      nextBtn.textContent="已完成";
+      nextBtn.onclick=null;
+    }
+
+    var timeline=document.getElementById("timeline");
+    var html="";
+    var currentDate="";
+    for(var j=0;j<plan.length;j++){
+      var item=plan[j], dk=dateKey(item.date);
+      if(dk!==currentDate){
+        if(currentDate) html+="</div>";
+        currentDate=dk;
+        var isToday=dk===TODAY;
+        html+='<div class="day">';
+        html+='<div class="day-head"><b>'+fmtDate(item.date)+'</b>'+(isToday?'<span class="today-pill">今天</span>':'')+'</div>';
+      }
+      var isDone=data.indexOf(item.key)>=0;
+      html+='<div class="meal '+(isDone?'done ':'')+(dk!==TODAY && dk>TODAY?'locked':'')+'">';
+      html+='<div class="dot">'+item.emoji+'</div>';
+      html+='<div class="meal-info">';
+      html+='<div class="meal-name">第'+item.n+'顿 · '+item.label+'</div>';
+      html+='<div class="meal-meta">'+(dk===TODAY?'今天':'疗程计划')+'</div>';
+      html+='<div class="meal-status">'+(isDone?'✓ 已完成':'未完成')+'</div>';
+      html+='</div>';
+      html+='<button type="button" class="meal-btn '+(isDone?'done':'')+'" data-key="'+item.key+'">'+(isDone?'✓ 已完成':'点击打卡')+'</button>';
+      html+='</div>';
+    }
+    if(currentDate) html+="</div>";
+    timeline.innerHTML=html;
+
+    var buttons=timeline.querySelectorAll(".meal-btn");
+    for(var k=0;k<buttons.length;k++){
+      buttons[k].addEventListener("click",function(){
+        mark(this.getAttribute("data-key"));
+      });
+    }
+  }
+
+  var INITIAL_RECORDS = ["2026-09-07-night", "2026-09-08-morning", "2026-09-08-night", "2026-09-09-morning", "2026-09-09-night", "2026-09-10-morning", "2026-09-10-night", "2026-09-11-morning"];
+  render();
+})();
+</script>
+</body>
+</html>
