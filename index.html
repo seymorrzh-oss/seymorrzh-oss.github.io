@@ -443,10 +443,6 @@ button{
 
 <div class="app">
 
-  <!-- =========================
-       顶部
-  ========================== -->
-
   <section class="hero">
 
     <div class="topline">
@@ -461,15 +457,11 @@ button{
 
     </div>
 
-
     <div class="subtitle">
       20 顿疗程 · 每天早晚各 1 次 · 2026.09.07 晚开始
     </div>
 
-
-    <!-- =========================
-         本机实时时间
-    ========================== -->
+    <!-- 本机实时时间 -->
 
     <div class="local-time">
 
@@ -485,72 +477,40 @@ button{
 
     </div>
 
-
-    <!-- =========================
-         统计
-    ========================== -->
+    <!-- 统计 -->
 
     <div class="stats">
 
       <div class="stat">
-
-        <b id="doneCount">
-          8
-        </b>
-
-        <span>
-          已吃
-        </span>
-
+        <b id="doneCount">8</b>
+        <span>已吃</span>
       </div>
 
-
       <div class="stat">
-
-        <b id="leftCount">
-          12
-        </b>
-
-        <span>
-          剩余
-        </span>
-
+        <b id="leftCount">12</b>
+        <span>剩余</span>
       </div>
 
-
       <div class="stat">
-
-        <b id="percent">
-          40%
-        </b>
-
-        <span>
-          完成度
-        </span>
-
+        <b id="percent">40%</b>
+        <span>完成度</span>
       </div>
 
     </div>
 
-
-    <!-- =========================
-         进度条
-    ========================== -->
+    <!-- 进度条 -->
 
     <div class="progress-wrap">
 
       <div class="progress-head">
 
-        <span>
-          疗程进度
-        </span>
+        <span>疗程进度</span>
 
         <span id="progressText">
           8 / 20 顿
         </span>
 
       </div>
-
 
       <div class="progress">
 
@@ -563,17 +523,11 @@ button{
 
     </div>
 
-
-    <!-- =========================
-         下一顿
-    ========================== -->
+    <!-- 下一顿 -->
 
     <div class="next">
 
-      <small>
-        下一顿
-      </small>
-
+      <small>下一顿</small>
 
       <div class="next-main">
 
@@ -585,7 +539,6 @@ button{
             🌙 9月11日 · 晚上
           </div>
 
-
           <div
             class="next-status"
             id="nextStatus">
@@ -593,7 +546,6 @@ button{
           </div>
 
         </div>
-
 
         <button
           class="primary"
@@ -610,34 +562,23 @@ button{
 
   </section>
 
-
-  <!-- =========================
-       时间轴
-  ========================== -->
+  <!-- 时间轴 -->
 
   <section class="section">
 
     <div class="section-title">
 
-      <h2>
-        时间轴
-      </h2>
+      <h2>时间轴</h2>
 
-      <span>
-        每一顿独立记录
-      </span>
+      <span>每一顿独立记录</span>
 
     </div>
-
 
     <div id="timeline"></div>
 
   </section>
 
-
-  <!-- =========================
-       底部说明
-  ========================== -->
+  <!-- 底部说明 -->
 
   <div class="footer">
 
@@ -653,17 +594,14 @@ button{
 
 </div>
 
-
 <div
   class="toast"
   id="toast">
 </div>
 
-
 <script>
 
 (function(){
-
 
 /* =====================================
    基础设置
@@ -672,10 +610,8 @@ button{
 var STORAGE_KEY =
   "medicineTimelineH5_v5";
 
-
 var TOTAL =
   20;
-
 
 /*
  * 疗程开始：
@@ -685,7 +621,6 @@ var TOTAL =
 var START =
   new Date(2026,8,7);
 
-
 /*
  * 每天服药时间
  */
@@ -693,17 +628,13 @@ var START =
 var MORNING_HOUR =
   10;
 
-
 var NIGHT_HOUR =
   22;
 
-
 /*
- * =====================================
  * 已经完成的初始记录
  *
  * 一共8顿
- * =====================================
  */
 
 var INITIAL_RECORDS = [
@@ -723,7 +654,6 @@ var INITIAL_RECORDS = [
 
 ];
 
-
 /* =====================================
    日期工具
 ===================================== */
@@ -736,7 +666,6 @@ function pad(n){
 
 }
 
-
 function dateKey(date){
 
   return date.getFullYear()
@@ -747,7 +676,6 @@ function dateKey(date){
 
 }
 
-
 function keyOf(date,period){
 
   return dateKey(date)
@@ -755,7 +683,6 @@ function keyOf(date,period){
     + period;
 
 }
-
 
 function fmtDate(date){
 
@@ -765,7 +692,6 @@ function fmtDate(date){
     + "日";
 
 }
-
 
 /* =====================================
    获取本机时间
@@ -777,7 +703,6 @@ function now(){
 
 }
 
-
 /* =====================================
    实时显示本机时间
 ===================================== */
@@ -786,7 +711,6 @@ function updateLocalTime(){
 
   var current =
     now();
-
 
   var text =
     current.getFullYear()
@@ -801,12 +725,10 @@ function updateLocalTime(){
     + ":"
     + pad(current.getSeconds());
 
-
   var el =
     document.getElementById(
       "localTime"
     );
-
 
   if(el){
 
@@ -817,13 +739,11 @@ function updateLocalTime(){
 
 }
 
-
 /*
  * 页面打开立即显示
  */
 
 updateLocalTime();
-
 
 /*
  * 每秒更新一次
@@ -834,7 +754,6 @@ setInterval(
   1000
 );
 
-
 /* =====================================
    判断某顿是否已经到时间
 ===================================== */
@@ -844,10 +763,8 @@ function isAvailable(item){
   var current =
     now();
 
-
   var itemDate =
     new Date(item.date);
-
 
   /*
    * 未来日期
@@ -863,11 +780,9 @@ function isAvailable(item){
 
   }
 
-
   /*
    * 过去日期
    *
-   * 注意：
    * 过去的药不会自动打卡。
    * 只是允许用户补打卡。
    */
@@ -881,7 +796,6 @@ function isAvailable(item){
     return true;
 
   }
-
 
   /*
    * 今天早上
@@ -899,7 +813,6 @@ function isAvailable(item){
 
   }
 
-
   /*
    * 今天晚上
    */
@@ -916,11 +829,9 @@ function isAvailable(item){
 
   }
 
-
   return false;
 
 }
-
 
 /* =====================================
    判断是否未来
@@ -931,10 +842,8 @@ function isFuture(item){
   var current =
     now();
 
-
   var itemDate =
     new Date(item.date);
-
 
   /*
    * 日期未来
@@ -949,7 +858,6 @@ function isFuture(item){
     return true;
 
   }
-
 
   /*
    * 今天但时间未到
@@ -966,28 +874,23 @@ function isFuture(item){
       ===
       "morning"
       &&
-      (
-        current.getHours()
-        <
-        MORNING_HOUR
-      )
+      current.getHours()
+      <
+      MORNING_HOUR
     ){
 
       return true;
 
     }
 
-
     if(
       item.period
       ===
       "night"
       &&
-      (
-        current.getHours()
-        <
-        NIGHT_HOUR
-      )
+      current.getHours()
+      <
+      NIGHT_HOUR
     ){
 
       return true;
@@ -996,11 +899,9 @@ function isFuture(item){
 
   }
 
-
   return false;
 
 }
-
 
 /* =====================================
    本机存储
@@ -1015,12 +916,10 @@ function load(){
         STORAGE_KEY
       );
 
-
     if(raw){
 
       var parsed =
         JSON.parse(raw);
-
 
       if(
         Array.isArray(parsed)
@@ -1041,7 +940,6 @@ function load(){
 
   }
 
-
   /*
    * 第一次打开
    */
@@ -1049,14 +947,11 @@ function load(){
   var initial =
     INITIAL_RECORDS.slice();
 
-
   save(initial);
-
 
   return initial;
 
 }
-
 
 function save(data){
 
@@ -1078,7 +973,6 @@ function save(data){
 
 }
 
-
 /* =====================================
    建立20顿疗程
 ===================================== */
@@ -1092,8 +986,8 @@ function buildPlan(){
   var d =
     new Date(START);
 
-
   /*
+   * 第1顿：
    * 9月7日晚上
    */
 
@@ -1116,28 +1010,34 @@ function buildPlan(){
 
   });
 
-
   /*
-   * 9月8日开始
+   * 第2顿开始：
+   * 9月8日早上
+   *
+   * 这里必须是 i <= 10
+   *
+   * 9月8日 → 9月17日
+   * 共10天
+   *
    * 每天早晚两顿
+   * 最终：
+   * 第20顿 = 9月17日早上
    */
 
   for(
     var i = 1;
-    i < 10;
+    i <= 10;
     i++
   ){
 
     d =
       new Date(START);
 
-
     d.setDate(
       START.getDate()
       +
       i
     );
-
 
     list.push({
 
@@ -1157,7 +1057,6 @@ function buildPlan(){
       n:++n
 
     });
-
 
     list.push({
 
@@ -1180,15 +1079,36 @@ function buildPlan(){
 
   }
 
+  /*
+   * 注意：
+   * 上面会生成：
+   *
+   * 第1顿  9/7 晚
+   * 第2顿  9/8 早
+   * 第3顿  9/8 晚
+   * ...
+   * 第19顿 9/16 晚
+   * 第20顿 9/17 早
+   *
+   * 但是最后一次循环的 9/17 晚
+   * 是第21顿，所以需要删除它。
+   */
+
+  if(list.length > TOTAL){
+
+    list = list.slice(
+      0,
+      TOTAL
+    );
+
+  }
 
   return list;
 
 }
 
-
 var plan =
   buildPlan();
-
 
 /* =====================================
    Toast
@@ -1201,20 +1121,16 @@ function toast(msg){
       "toast"
     );
 
-
   el.textContent =
     msg;
-
 
   el.classList.add(
     "show"
   );
 
-
   clearTimeout(
     window.__toastTimer
   );
-
 
   window.__toastTimer =
     setTimeout(
@@ -1230,7 +1146,6 @@ function toast(msg){
 
 }
 
-
 /* =====================================
    手动打卡
 ===================================== */
@@ -1239,7 +1154,6 @@ function mark(key){
 
   var data =
     load();
-
 
   /*
    * 已经打卡
@@ -1259,14 +1173,12 @@ function mark(key){
 
   }
 
-
   /*
    * 找到对应记录
    */
 
   var item =
     null;
-
 
   for(
     var i = 0;
@@ -1288,7 +1200,6 @@ function mark(key){
     }
 
   }
-
 
   /*
    * 还没到时间
@@ -1322,7 +1233,6 @@ function mark(key){
 
   }
 
-
   /*
    * 保存
    */
@@ -1331,20 +1241,17 @@ function mark(key){
 
   save(data);
 
-
   /*
    * 重新渲染
    */
 
   render();
 
-
   toast(
     "已记录这顿药 ✓"
   );
 
 }
-
 
 /* =====================================
    找到下一顿
@@ -1356,7 +1263,7 @@ function findNext(data){
    * 第一优先：
    * 已经到时间但没有打卡
    *
-   * 这样如果昨天漏打，
+   * 如果之前漏打，
    * 不会直接跳过。
    */
 
@@ -1384,7 +1291,6 @@ function findNext(data){
 
   }
 
-
   /*
    * 第二优先：
    * 最近的一顿未来药
@@ -1410,11 +1316,9 @@ function findNext(data){
 
   }
 
-
   return null;
 
 }
-
 
 /* =====================================
    下一顿状态文字
@@ -1427,7 +1331,6 @@ function getNextStatus(item){
     return "20顿疗程已全部完成";
 
   }
-
 
   /*
    * 已经可以吃
@@ -1447,11 +1350,9 @@ function getNextStatus(item){
 
     }
 
-
     return "已经到22:00，可以手动打卡";
 
   }
-
 
   /*
    * 未来日期
@@ -1459,7 +1360,6 @@ function getNextStatus(item){
 
   var current =
     now();
-
 
   if(
     dateKey(item.date)
@@ -1473,15 +1373,15 @@ function getNextStatus(item){
       "morning"
     ){
 
-      return "明天10:00后可以打卡";
+      return fmtDate(item.date)
+        + " 10:00后可以打卡";
 
     }
 
-
-    return "当天22:00后可以打卡";
+    return fmtDate(item.date)
+      + " 22:00后可以打卡";
 
   }
-
 
   /*
    * 今天早上还没到10点
@@ -1497,7 +1397,6 @@ function getNextStatus(item){
 
   }
 
-
   /*
    * 今天晚上还没到22点
    */
@@ -1505,7 +1404,6 @@ function getNextStatus(item){
   return "今天22:00后可以打卡";
 
 }
-
 
 /* =====================================
    页面渲染
@@ -1516,7 +1414,6 @@ function render(){
   var data =
     load();
 
-
   /*
    * 统计
    */
@@ -1524,13 +1421,11 @@ function render(){
   var doneCount =
     data.length;
 
-
   var left =
     Math.max(
       0,
       TOTAL - doneCount
     );
-
 
   var pct =
     Math.round(
@@ -1541,24 +1436,20 @@ function render(){
       100
     );
 
-
   document.getElementById(
     "doneCount"
   ).textContent =
     doneCount;
-
 
   document.getElementById(
     "leftCount"
   ).textContent =
     left;
 
-
   document.getElementById(
     "percent"
   ).textContent =
     pct + "%";
-
 
   document.getElementById(
     "progressText"
@@ -1571,40 +1462,32 @@ function render(){
     +
     " 顿";
 
-
   document.getElementById(
     "bar"
   ).style.width =
     pct + "%";
 
-
   /*
-   * =====================================
    * 下一顿
-   * =====================================
    */
 
   var next =
     findNext(data);
-
 
   var nextTitle =
     document.getElementById(
       "nextTitle"
     );
 
-
   var nextStatus =
     document.getElementById(
       "nextStatus"
     );
 
-
   var nextBtn =
     document.getElementById(
       "nextBtn"
     );
-
 
   if(next){
 
@@ -1619,10 +1502,8 @@ function render(){
       +
       next.label;
 
-
     nextStatus.textContent =
       getNextStatus(next);
-
 
     /*
      * 到时间
@@ -1635,10 +1516,8 @@ function render(){
       nextBtn.disabled =
         false;
 
-
       nextBtn.textContent =
         "点击打卡";
-
 
       nextBtn.onclick =
         function(){
@@ -1651,7 +1530,6 @@ function render(){
 
     }
 
-
     /*
      * 没到时间
      */
@@ -1661,10 +1539,8 @@ function render(){
       nextBtn.disabled =
         true;
 
-
       nextBtn.textContent =
         "未开始";
-
 
       nextBtn.onclick =
         null;
@@ -1672,7 +1548,6 @@ function render(){
     }
 
   }
-
 
   /*
    * 全部完成
@@ -1683,24 +1558,19 @@ function render(){
     nextTitle.textContent =
       "🎉 20顿全部完成";
 
-
     nextStatus.textContent =
       "疗程已完成";
-
 
     nextBtn.disabled =
       true;
 
-
     nextBtn.textContent =
       "已完成";
-
 
     nextBtn.onclick =
       null;
 
   }
-
 
   /*
    * =====================================
@@ -1713,12 +1583,10 @@ function render(){
       "timeline"
     );
 
-
   var html = "";
 
   var currentDate =
     "";
-
 
   for(
     var j = 0;
@@ -1729,12 +1597,10 @@ function render(){
     var item =
       plan[j];
 
-
     var dk =
       dateKey(
         item.date
       );
-
 
     /*
      * 日期标题
@@ -1753,24 +1619,19 @@ function render(){
 
       }
 
-
       currentDate =
         dk;
 
-
       var current =
         now();
-
 
       var isToday =
         dk
         ===
         dateKey(current);
 
-
       html +=
         '<div class="day">';
-
 
       html +=
         '<div class="day-head">'
@@ -1795,7 +1656,6 @@ function render(){
 
     }
 
-
     /*
      * 当前状态
      */
@@ -1807,12 +1667,10 @@ function render(){
       >=
       0;
 
-
     var future =
       isFuture(
         item
       );
-
 
     var mealClass =
       "meal "
@@ -1833,14 +1691,12 @@ function render(){
         ""
       );
 
-
     html +=
       '<div class="'
       +
       mealClass
       +
       '">';
-
 
     /*
      * 图标
@@ -1853,14 +1709,12 @@ function render(){
       +
       '</div>';
 
-
     /*
      * 信息
      */
 
     html +=
       '<div class="meal-info">';
-
 
     html +=
       '<div class="meal-name">'
@@ -1875,13 +1729,11 @@ function render(){
       +
       '</div>';
 
-
     /*
      * 时间提示
      */
 
     var metaText;
-
 
     if(future){
 
@@ -1934,14 +1786,12 @@ function render(){
 
     }
 
-
     html +=
       '<div class="meal-meta">'
       +
       metaText
       +
       '</div>';
-
 
     /*
      * 状态
@@ -1966,17 +1816,14 @@ function render(){
       +
       '</div>';
 
-
     html +=
       '</div>';
-
 
     /*
      * 按钮
      */
 
     var btnText;
-
 
     if(isDone){
 
@@ -1994,7 +1841,6 @@ function render(){
         "点击打卡";
 
     }
-
 
     html +=
       '<button '
@@ -2035,12 +1881,10 @@ function render(){
       +
       '</button>';
 
-
     html +=
       '</div>';
 
   }
-
 
   if(currentDate){
 
@@ -2049,10 +1893,8 @@ function render(){
 
   }
 
-
   timeline.innerHTML =
     html;
-
 
   /*
    * 绑定按钮
@@ -2062,7 +1904,6 @@ function render(){
     timeline.querySelectorAll(
       ".meal-btn"
     );
-
 
   for(
     var k = 0;
@@ -2079,7 +1920,6 @@ function render(){
             "data-key"
           );
 
-
         mark(key);
 
       }
@@ -2089,13 +1929,11 @@ function render(){
 
 }
 
-
 /* =====================================
    页面启动
 ===================================== */
 
 render();
-
 
 /*
  * 每分钟重新检查服药状态
@@ -2109,7 +1947,6 @@ setInterval(
   },
   60 * 1000
 );
-
 
 })();
 </script>
