@@ -10,9 +10,6 @@ const STORAGE_KEY =
    已确定的信息
 ========================================================= */
 
-const DYDROGESTERONE_FINISHED =
-  "2026-09-17T10:33:00";
-
 const WAITING_START =
   "2026-09-17";
 
@@ -31,17 +28,19 @@ let state = loadState();
 
 
 function defaultState() {
+
   return {
 
-    periodStart:
-      null,
+    periodStart: null,
 
     medicineTime:
       "22:00",
 
     yasminTaken:
       {}
+
   };
+
 }
 
 
@@ -56,15 +55,21 @@ function loadState() {
         )
       );
 
+
     return {
+
       ...defaultState(),
+
       ...(saved || {})
+
     };
 
   } catch {
 
     return defaultState();
+
   }
+
 }
 
 
@@ -74,6 +79,7 @@ function saveState() {
     STORAGE_KEY,
     JSON.stringify(state)
   );
+
 }
 
 
@@ -119,6 +125,7 @@ function getBeijingNow() {
 
   const data = {};
 
+
   parts.forEach(
     part => {
 
@@ -131,7 +138,9 @@ function getBeijingNow() {
           part.type
         ] =
           part.value;
+
       }
+
     }
   );
 
@@ -146,7 +155,9 @@ function getBeijingNow() {
 
     seconds:
       data.second
+
   };
+
 }
 
 
@@ -162,8 +173,8 @@ function parseDate(value) {
     day
   ] =
     value
-    .split("-")
-    .map(Number);
+      .split("-")
+      .map(Number);
 
 
   return new Date(
@@ -174,6 +185,7 @@ function parseDate(value) {
     0,
     0
   );
+
 }
 
 
@@ -182,26 +194,31 @@ function formatDate(date) {
   const year =
     date.getFullYear();
 
+
   const month =
     String(
       date.getMonth() + 1
-    ).padStart(
-      2,
-      "0"
-    );
+    )
+      .padStart(
+        2,
+        "0"
+      );
+
 
   const day =
     String(
       date.getDate()
-    ).padStart(
-      2,
-      "0"
-    );
+    )
+      .padStart(
+        2,
+        "0"
+      );
 
 
   return (
     `${year}-${month}-${day}`
   );
+
 }
 
 
@@ -215,6 +232,7 @@ function prettyDate(value) {
     `${date.getMonth() + 1}月` +
     `${date.getDate()}日`
   );
+
 }
 
 
@@ -226,6 +244,7 @@ function addDays(
   const date =
     parseDate(value);
 
+
   date.setDate(
     date.getDate() +
     number
@@ -235,6 +254,7 @@ function addDays(
   return formatDate(
     date
   );
+
 }
 
 
@@ -245,6 +265,7 @@ function daysBetween(
 
   const a =
     parseDate(start);
+
 
   const b =
     parseDate(end);
@@ -257,6 +278,7 @@ function daysBetween(
     ) /
     86400000
   );
+
 }
 
 
@@ -279,15 +301,80 @@ function updateClock() {
     `${now.date} ` +
     `${now.time} ` +
     `北京时间`;
+
 }
 
 
 updateClock();
 
+
 setInterval(
   updateClock,
   1000
 );
+
+
+/* =========================================================
+   第一阶段历史记录展开 / 收起
+========================================================= */
+
+function toggleDydrogesteroneHistory() {
+
+  const history =
+    document.getElementById(
+      "dydrogesteroneHistory"
+    );
+
+
+  const arrow =
+    document.getElementById(
+      "historyArrow"
+    );
+
+
+  const text =
+    document.getElementById(
+      "historyToggleText"
+    );
+
+
+  const isHidden =
+    history.classList.contains(
+      "hidden"
+    );
+
+
+  if (isHidden) {
+
+    history.classList.remove(
+      "hidden"
+    );
+
+
+    arrow.textContent =
+      "⌃";
+
+
+    text.textContent =
+      "收起详细记录";
+
+  } else {
+
+    history.classList.add(
+      "hidden"
+    );
+
+
+    arrow.textContent =
+      "⌄";
+
+
+    text.textContent =
+      "查看详细记录";
+
+  }
+
+}
 
 
 /* =========================================================
@@ -312,7 +399,9 @@ function renderWaiting() {
 
 
   if (day < 1) {
+
     day = 1;
+
   }
 
 
@@ -361,18 +450,34 @@ function renderWaiting() {
   ) {
 
     const remaining =
-      WAITING_DAYS -
-      difference;
+      Math.max(
+        0,
+        WAITING_DAYS -
+        difference -
+        1
+      );
 
 
-    text =
-      `观察期第 ${day} 天，` +
-      `7 天观察期还剩 ${remaining} 天`;
+    if (
+      remaining > 0
+    ) {
+
+      text =
+        `观察期第 ${day} 天，` +
+        `之后还有 ${remaining} 天`;
+
+    } else {
+
+      text =
+        "今天是 7 天观察期的最后一天";
+
+    }
 
   } else {
 
     text =
       "7 天观察期已经结束";
+
   }
 
 
@@ -382,6 +487,7 @@ function renderWaiting() {
     )
     .textContent =
     text;
+
 }
 
 
@@ -412,6 +518,7 @@ function openPeriodModal() {
     .remove(
       "hidden"
     );
+
 }
 
 
@@ -425,6 +532,7 @@ function closePeriodModal() {
     .add(
       "hidden"
     );
+
 }
 
 
@@ -436,10 +544,10 @@ function confirmPeriodStart() {
 
   const date =
     document
-    .getElementById(
-      "periodDateInput"
-    )
-    .value;
+      .getElementById(
+        "periodDateInput"
+      )
+      .value;
 
 
   if (!date) {
@@ -449,6 +557,7 @@ function confirmPeriodStart() {
     );
 
     return;
+
   }
 
 
@@ -466,13 +575,9 @@ function confirmPeriodStart() {
     );
 
     return;
+
   }
 
-
-  /*
-     如果之前已经记录过，
-     修改日期会重新生成优思明周期。
-  */
 
   if (
     state.periodStart &&
@@ -493,12 +598,15 @@ function confirmPeriodStart() {
 
 
     if (!confirmed) {
+
       return;
+
     }
 
 
     state.yasminTaken =
       {};
+
   }
 
 
@@ -511,6 +619,7 @@ function confirmPeriodStart() {
   closePeriodModal();
 
   renderAll();
+
 }
 
 
@@ -521,6 +630,7 @@ function confirmPeriodStart() {
 function editPeriodDate() {
 
   openPeriodModal();
+
 }
 
 
@@ -535,15 +645,18 @@ function renderPeriod() {
       "waitingSection"
     );
 
+
   const periodSection =
     document.getElementById(
       "periodSection"
     );
 
+
   const yasminSection =
     document.getElementById(
       "yasminSection"
     );
+
 
   const resetSection =
     document.getElementById(
@@ -561,11 +674,13 @@ function renderPeriod() {
         "hidden"
       );
 
+
     periodSection
       .classList
       .add(
         "hidden"
       );
+
 
     yasminSection
       .classList
@@ -573,13 +688,16 @@ function renderPeriod() {
         "hidden"
       );
 
+
     resetSection
       .classList
       .add(
         "hidden"
       );
 
+
     return;
+
   }
 
 
@@ -589,17 +707,20 @@ function renderPeriod() {
       "hidden"
     );
 
+
   periodSection
     .classList
     .remove(
       "hidden"
     );
 
+
   yasminSection
     .classList
     .remove(
       "hidden"
     );
+
 
   resetSection
     .classList
@@ -624,6 +745,7 @@ function renderPeriod() {
   ) {
 
     currentDay = 1;
+
   }
 
 
@@ -654,8 +776,8 @@ function renderPeriod() {
 
 
   /*
-     Day 1 = 开始当天
-     Day 5 = +4 天
+     Day 1 = 月经开始当天
+     Day 5 = Day 1 + 4天
   */
 
   const day5 =
@@ -671,11 +793,12 @@ function renderPeriod() {
     )
     .textContent =
     prettyDate(day5);
+
 }
 
 
 /* =========================================================
-   优思明时间
+   优思明时间设置
 ========================================================= */
 
 function toggleTimeEditor() {
@@ -699,6 +822,7 @@ function toggleTimeEditor() {
     )
     .value =
     state.medicineTime;
+
 }
 
 
@@ -706,10 +830,10 @@ function saveMedicineTime() {
 
   const value =
     document
-    .getElementById(
-      "medicineTimeInput"
-    )
-    .value;
+      .getElementById(
+        "medicineTimeInput"
+      )
+      .value;
 
 
   if (!value) {
@@ -719,6 +843,7 @@ function saveMedicineTime() {
     );
 
     return;
+
   }
 
 
@@ -740,11 +865,12 @@ function saveMedicineTime() {
 
 
   renderYasmin();
+
 }
 
 
 /* =========================================================
-   优思明日期
+   优思明开始日期
 ========================================================= */
 
 function getYasminStart() {
@@ -754,17 +880,15 @@ function getYasminStart() {
   ) {
 
     return null;
+
   }
 
-
-  /*
-     月经 Day 5
-  */
 
   return addDays(
     state.periodStart,
     4
   );
+
 }
 
 
@@ -779,6 +903,7 @@ function renderYasmin() {
   ) {
 
     return;
+
   }
 
 
@@ -798,16 +923,12 @@ function renderYasmin() {
     state.medicineTime;
 
 
-  /*
-     已服数量
-  */
-
   const takenCount =
     Object.values(
       state.yasminTaken
     )
-    .filter(Boolean)
-    .length;
+      .filter(Boolean)
+      .length;
 
 
   const remaining =
@@ -856,10 +977,6 @@ function renderYasmin() {
     `${percent}%`;
 
 
-  /*
-     状态
-  */
-
   const status =
     document.getElementById(
       "yasminStatus"
@@ -886,12 +1003,9 @@ function renderYasmin() {
 
     status.textContent =
       "进行中";
+
   }
 
-
-  /*
-     Timeline
-  */
 
   const timeline =
     document.getElementById(
@@ -938,12 +1052,15 @@ function renderYasmin() {
     ) {
 
       nextDose = {
+
         number:
           doseNumber,
 
         date:
           doseDate
+
       };
+
     }
 
 
@@ -962,19 +1079,19 @@ function renderYasmin() {
       now.date
     ) {
 
-      item.classList
-        .add(
-          "today"
-        );
+      item.classList.add(
+        "today"
+      );
+
     }
 
 
     if (taken) {
 
-      item.classList
-        .add(
-          "taken"
-        );
+      item.classList.add(
+        "taken"
+      );
+
     }
 
 
@@ -984,34 +1101,34 @@ function renderYasmin() {
         ${doseNumber}
       </div>
 
-
       <div class="dose-info">
 
         <strong>
-          Day ${doseNumber}
+          第 ${doseNumber} 片
           ·
           ${prettyDate(doseDate)}
         </strong>
 
         <span>
           ${state.medicineTime}
-          ${doseDate === now.date
-            ? " · 今天"
-            : ""}
+          ${
+            doseDate === now.date
+              ? " · 今天"
+              : ""
+          }
         </span>
 
       </div>
-
 
       <button
         class="check-button"
         onclick="toggleDose(${doseNumber})"
       >
-
-        ${taken
-          ? "✓ 已服"
-          : "打卡"}
-
+        ${
+          taken
+            ? "✓ 已服"
+            : "打卡"
+        }
       </button>
 
     `;
@@ -1020,17 +1137,15 @@ function renderYasmin() {
     timeline.appendChild(
       item
     );
+
   }
 
-
-  /*
-     下一次服药
-  */
 
   const nextMedicine =
     document.getElementById(
       "nextMedicine"
     );
+
 
   const nextHint =
     document.getElementById(
@@ -1046,6 +1161,7 @@ function renderYasmin() {
     nextMedicine.textContent =
       "21 天已完成";
 
+
     nextHint.textContent =
       "本周期全部打卡完成 🎉";
 
@@ -1057,6 +1173,7 @@ function renderYasmin() {
     nextMedicine.textContent =
       `${prettyDate(start)} ${state.medicineTime}`;
 
+
     nextHint.textContent =
       "月经 Day 5 开始";
 
@@ -1067,31 +1184,28 @@ function renderYasmin() {
     nextMedicine.textContent =
       `${prettyDate(nextDose.date)} ${state.medicineTime}`;
 
+
     nextHint.textContent =
       `第 ${nextDose.number} 片`;
 
   } else {
 
-    /*
-       可能存在过去漏打卡
-    */
-
     const firstUntaken =
       Array
-      .from(
-        {
-          length:
-            YASMIN_TOTAL
-        },
-        (_, index) =>
-          index + 1
-      )
-      .find(
-        number =>
-          !state.yasminTaken[
-            number
-          ]
-      );
+        .from(
+          {
+            length:
+              YASMIN_TOTAL
+          },
+          (_, index) =>
+            index + 1
+        )
+        .find(
+          number =>
+            !state.yasminTaken[
+              number
+            ]
+        );
 
 
     if (firstUntaken) {
@@ -1106,6 +1220,7 @@ function renderYasmin() {
       nextMedicine.textContent =
         `${prettyDate(missedDate)} ${state.medicineTime}`;
 
+
       nextHint.textContent =
         `第 ${firstUntaken} 片尚未打卡`;
 
@@ -1117,7 +1232,7 @@ function renderYasmin() {
 
 
 /* =========================================================
-   打卡
+   优思明打卡
 ========================================================= */
 
 function toggleDose(
@@ -1139,7 +1254,9 @@ function toggleDose(
 
 
     if (!confirmed) {
+
       return;
+
     }
 
 
@@ -1152,12 +1269,14 @@ function toggleDose(
     state.yasminTaken[
       number
     ] = {
+
       taken:
         true,
 
       checkedAt:
         new Date()
-        .toISOString()
+          .toISOString()
+
     };
 
   }
@@ -1166,6 +1285,7 @@ function toggleDose(
   saveState();
 
   renderYasmin();
+
 }
 
 
@@ -1183,12 +1303,15 @@ function resetPeriodCycle() {
 
 
   if (!confirmed) {
+
     return;
+
   }
 
 
   state.periodStart =
     null;
+
 
   state.yasminTaken =
     {};
@@ -1197,6 +1320,7 @@ function resetPeriodCycle() {
   saveState();
 
   renderAll();
+
 }
 
 
@@ -1210,11 +1334,13 @@ function renderAll() {
 
   renderPeriod();
 
+
   if (
     state.periodStart
   ) {
 
     renderYasmin();
+
   }
 
 }
@@ -1226,11 +1352,6 @@ function renderAll() {
 
 renderAll();
 
-
-/*
-   日期变化时自动更新。
-   每分钟检查一次即可。
-*/
 
 setInterval(
   renderAll,

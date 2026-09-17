@@ -14,7 +14,6 @@
 
 <div class="container">
 
-  <!-- 标题 -->
   <header>
     <div class="logo">💊</div>
 
@@ -25,19 +24,25 @@
   </header>
 
 
-  <!-- 地屈孕酮完成 -->
+  <!-- =========================
+       第一阶段：地屈孕酮
+  ========================== -->
+
   <section class="card completed-card">
 
     <div class="section-title">
+
       <div>
-        <span class="small-title">上一阶段</span>
+        <span class="small-title">第一阶段</span>
         <h2>地屈孕酮</h2>
       </div>
 
       <span class="done-badge">
         ✓ 已完成
       </span>
+
     </div>
+
 
     <div class="medicine-summary">
 
@@ -53,21 +58,137 @@
 
     </div>
 
+
     <p class="success-text">
       🎉 地屈孕酮阶段已经完成
     </p>
 
+
+    <!-- 展开按钮 -->
+
+    <button
+      class="history-toggle"
+      type="button"
+      onclick="toggleDydrogesteroneHistory()"
+    >
+
+      <span id="historyToggleText">
+        查看详细记录
+      </span>
+
+      <span id="historyArrow">
+        ⌄
+      </span>
+
+    </button>
+
+
+    <!-- 历史记录 -->
+
+    <div
+      id="dydrogesteroneHistory"
+      class="medicine-history hidden"
+    >
+
+      <div class="history-head">
+        <span>日期</span>
+        <span>早上</span>
+        <span>晚上</span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/07</span>
+        <span class="history-empty">—</span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/08</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/09</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/10</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/11</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/12</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/13</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/14</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/15</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/16</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-dose">🌙 晚上 <b>✓</b></span>
+      </div>
+
+
+      <div class="history-row">
+        <span class="history-date">09/17</span>
+        <span class="history-dose">🌅 早上 <b>✓</b></span>
+        <span class="history-empty">—</span>
+      </div>
+
+    </div>
+
   </section>
 
 
-  <!-- 等待姨妈 -->
+  <!-- =========================
+       第二阶段：等待姨妈
+  ========================== -->
+
   <section
     id="waitingSection"
     class="card"
   >
 
     <span class="small-title">
-      当前阶段
+      第二阶段 · 当前
     </span>
 
     <h2>🌙 等待姨妈</h2>
@@ -80,6 +201,7 @@
     <div class="waiting-box">
 
       <div class="waiting-number">
+
         <span id="waitingDay">
           Day 1
         </span>
@@ -87,16 +209,19 @@
         <small>
           观察进度
         </small>
+
       </div>
 
 
       <div class="progress-area">
 
         <div class="progress-bar">
+
           <div
             id="waitingProgress"
             class="progress-fill"
           ></div>
+
         </div>
 
         <p id="waitingText">
@@ -115,7 +240,7 @@
 
     <p class="hint">
       来姨妈当天点击下面按钮，并确认实际开始日期。
-      这一天会被记录为月经 Day 1。
+      这一天会记录为月经 Day 1。
     </p>
 
 
@@ -129,15 +254,19 @@
   </section>
 
 
-  <!-- 已经记录月经 -->
+  <!-- =========================
+       姨妈记录
+  ========================== -->
+
   <section
     id="periodSection"
     class="card hidden"
   >
 
     <span class="small-title">
-      月经追踪
+      第二阶段 · 月经追踪
     </span>
+
 
     <div class="section-title">
 
@@ -158,17 +287,28 @@
     <div class="info-grid">
 
       <div class="info-box">
-        <span>开始日期</span>
+
+        <span>
+          开始日期
+        </span>
+
         <strong id="periodStartDisplay">
           -
         </strong>
+
       </div>
 
+
       <div class="info-box">
-        <span>今天</span>
+
+        <span>
+          今天
+        </span>
+
         <strong id="currentPeriodDay">
           Day -
         </strong>
+
       </div>
 
     </div>
@@ -179,7 +319,9 @@
       class="day5-box"
     >
 
-      <span>💊 优思明开始日</span>
+      <span>
+        💊 优思明开始日
+      </span>
 
       <strong id="day5Date">
         -
@@ -202,7 +344,10 @@
   </section>
 
 
-  <!-- 优思明 -->
+  <!-- =========================
+       第三阶段：优思明
+  ========================== -->
+
   <section
     id="yasminSection"
     class="card hidden"
@@ -211,12 +356,17 @@
     <div class="section-title">
 
       <div>
+
         <span class="small-title">
-          下一阶段
+          第三阶段
         </span>
 
-        <h2>💊 优思明 · 21 天</h2>
+        <h2>
+          💊 优思明 · 21 天
+        </h2>
+
       </div>
+
 
       <span
         id="yasminStatus"
@@ -228,16 +378,20 @@
     </div>
 
 
-    <!-- 用药时间 -->
     <div class="time-setting">
 
       <div>
-        <span>每天服药时间</span>
+
+        <span>
+          每天服药时间
+        </span>
 
         <strong id="medicineTimeDisplay">
           22:00
         </strong>
+
       </div>
+
 
       <button
         onclick="toggleTimeEditor()"
@@ -269,50 +423,46 @@
     </div>
 
 
-    <!-- 统计 -->
     <div class="medicine-stats">
 
       <div>
         <span>已服</span>
-        <strong id="takenCount">
-          0
-        </strong>
+        <strong id="takenCount">0</strong>
         <small>/ 21</small>
       </div>
 
       <div>
         <span>剩余</span>
-        <strong id="remainingCount">
-          21
-        </strong>
+        <strong id="remainingCount">21</strong>
         <small>片</small>
       </div>
 
       <div>
         <span>进度</span>
-        <strong id="medicinePercent">
-          0%
-        </strong>
+        <strong id="medicinePercent">0%</strong>
       </div>
 
     </div>
 
 
     <div class="progress-bar medicine-progress">
+
       <div
         id="medicineProgressFill"
         class="progress-fill"
       ></div>
+
     </div>
 
 
-    <!-- 下一次 -->
     <div
       id="nextMedicineBox"
       class="next-dose"
     >
 
-      <span>下一次</span>
+      <span>
+        下一次
+      </span>
 
       <strong id="nextMedicine">
         -
@@ -325,17 +475,16 @@
     </div>
 
 
-    <!-- Timeline -->
     <h3 class="timeline-title">
-      21 天服药 Timeline
+      21 天服药记录
     </h3>
+
 
     <div id="medicineTimeline"></div>
 
   </section>
 
 
-  <!-- 重置 -->
   <section
     id="resetSection"
     class="reset-area hidden"
@@ -353,7 +502,10 @@
 </div>
 
 
-<!-- 姨妈日期确认弹窗 -->
+<!-- =========================
+     姨妈日期弹窗
+========================== -->
+
 <div
   id="periodModal"
   class="modal hidden"
@@ -365,7 +517,9 @@
       🩸
     </div>
 
-    <h2>记录姨妈开始日期</h2>
+    <h2>
+      记录姨妈开始日期
+    </h2>
 
     <p>
       请选择真正开始来姨妈的日期。
@@ -376,6 +530,7 @@
     <label>
       姨妈开始日期
     </label>
+
 
     <input
       id="periodDateInput"
