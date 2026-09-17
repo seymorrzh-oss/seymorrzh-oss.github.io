@@ -1,1956 +1,412 @@
-```html
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="format-detection" content="telephone=no">
-<meta name="theme-color" content="#f6f7fb">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fff7f8">
 
-<title>地屈孕酮吃药打卡</title>
+  <title>饼饼服药记录</title>
 
-<style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html,body{
-  margin:0;
-  padding:0;
-  background:#f6f7fb;
-  color:#172033;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB",Arial,sans-serif;
-}
-
-body{
-  padding-bottom:calc(28px + env(safe-area-inset-bottom));
-}
-
-button{
-  font:inherit;
-}
-
-.app{
-  width:100%;
-  max-width:680px;
-  margin:0 auto;
-  padding:18px 16px 0;
-}
-
-/* =========================
-   顶部卡片
-========================= */
-
-.hero{
-  background:linear-gradient(145deg,#ffffff 0%,#f0fff6 100%);
-  border:1px solid #e8ecef;
-  border-radius:24px;
-  padding:22px 20px 20px;
-  box-shadow:0 8px 28px rgba(20,32,50,.06);
-}
-
-.topline{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-
-.title{
-  font-size:25px;
-  font-weight:800;
-  letter-spacing:.2px;
-}
-
-.badge{
-  font-size:12px;
-  padding:7px 10px;
-  border-radius:999px;
-  background:#e9fff2;
-  color:#079447;
-  font-weight:700;
-  white-space:nowrap;
-}
-
-.subtitle{
-  margin:7px 0 15px;
-  color:#697386;
-  font-size:13px;
-}
-
-/* =========================
-   本机时间
-========================= */
-
-.local-time{
-  background:#172033;
-  color:#fff;
-  border-radius:17px;
-  padding:13px 15px;
-  margin-bottom:15px;
-}
-
-.local-time-label{
-  color:#aeb8c8;
-  font-size:11px;
-  margin-bottom:4px;
-}
-
-.local-time-value{
-  font-size:18px;
-  font-weight:800;
-  letter-spacing:.3px;
-  font-variant-numeric:tabular-nums;
-}
-
-/* =========================
-   数据统计
-========================= */
-
-.stats{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:10px;
-}
-
-.stat{
-  background:#fff;
-  border:1px solid #edf0f2;
-  border-radius:16px;
-  padding:13px 10px;
-}
-
-.stat b{
-  display:block;
-  font-size:22px;
-  line-height:1.1;
-  margin-bottom:4px;
-}
-
-.stat span{
-  font-size:12px;
-  color:#7b8493;
-}
-
-.progress-wrap{
-  margin-top:16px;
-}
-
-.progress-head{
-  display:flex;
-  justify-content:space-between;
-  font-size:13px;
-  color:#5f6877;
-  margin-bottom:8px;
-}
-
-.progress{
-  height:9px;
-  background:#e9edf0;
-  border-radius:999px;
-  overflow:hidden;
-}
-
-.bar{
-  height:100%;
-  width:0;
-  background:#18b866;
-  border-radius:999px;
-  transition:width .25s ease;
-}
-
-/* =========================
-   下一顿
-========================= */
-
-.next{
-  margin-top:16px;
-  border-radius:18px;
-  background:#172033;
-  color:#fff;
-  padding:16px;
-}
-
-.next small{
-  display:block;
-  color:#aeb8c8;
-  font-size:12px;
-  margin-bottom:5px;
-}
-
-.next-main{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-}
-
-.next-title{
-  font-size:16px;
-  font-weight:700;
-}
-
-.next-status{
-  margin-top:6px;
-  color:#aeb8c8;
-  font-size:12px;
-  line-height:1.5;
-}
-
-.primary{
-  border:0;
-  background:#19bd69;
-  color:#fff;
-  padding:12px 16px;
-  border-radius:13px;
-  font-weight:800;
-  min-width:106px;
-  cursor:pointer;
-  box-shadow:0 5px 14px rgba(25,189,105,.22);
-}
-
-.primary:active,
-.meal-btn:active{
-  transform:scale(.97);
-}
-
-.primary:disabled{
-  background:#667085;
-  box-shadow:none;
-  cursor:not-allowed;
-}
-
-/* =========================
-   时间轴
-========================= */
-
-.section{
-  margin-top:18px;
-}
-
-.section-title{
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-  margin:0 2px 10px;
-}
-
-.section-title h2{
-  font-size:17px;
-  margin:0;
-}
-
-.section-title span{
-  font-size:12px;
-  color:#8992a1;
-}
-
-.day{
-  margin-bottom:13px;
-}
-
-.day-head{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin:14px 3px 7px;
-}
-
-.day-head b{
-  font-size:14px;
-}
-
-.today-pill{
-  font-size:11px;
-  background:#e8fff1;
-  color:#079447;
-  padding:4px 7px;
-  border-radius:999px;
-  font-weight:700;
-}
-
-.meal{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  background:#fff;
-  border:1px solid #e9edf0;
-  border-radius:18px;
-  padding:12px;
-  margin-bottom:8px;
-  min-height:72px;
-  box-shadow:0 4px 16px rgba(20,32,50,.035);
-}
-
-.meal.done{
-  background:#f2fff7;
-  border-color:#c9f1da;
-}
-
-.dot{
-  width:38px;
-  height:38px;
-  border-radius:13px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#f1f4f7;
-  font-size:20px;
-  flex:0 0 38px;
-}
-
-.done .dot{
-  background:#d9f8e6;
-}
-
-.meal-info{
-  min-width:0;
-  flex:1;
-}
-
-.meal-name{
-  font-size:15px;
-  font-weight:750;
-}
-
-.meal-meta{
-  font-size:12px;
-  color:#7c8593;
-  margin-top:4px;
-}
-
-.meal-status{
-  font-size:12px;
-  color:#18a45c;
-  font-weight:700;
-  margin-top:4px;
-}
-
-.meal-btn{
-  border:1px solid #dfe5ea;
-  background:#fff;
-  color:#172033;
-  padding:10px 12px;
-  border-radius:12px;
-  font-size:13px;
-  font-weight:750;
-  cursor:pointer;
-  min-width:92px;
-}
-
-.meal-btn.done{
-  background:#dff9e9;
-  color:#078b45;
-  border-color:#c6efd6;
-}
-
-.meal-btn:disabled{
-  cursor:not-allowed;
-  background:#f1f3f5;
-  color:#98a0ad;
-  border-color:#e4e7eb;
-  opacity:.75;
-}
-
-.locked{
-  opacity:.58;
-}
-
-/* =========================
-   底部
-========================= */
-
-.footer{
-  margin:20px 2px 0;
-  color:#9aa2af;
-  font-size:11px;
-  line-height:1.7;
-  text-align:center;
-}
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:28px;
-  transform:translateX(-50%) translateY(15px);
-  background:rgba(23,32,51,.94);
-  color:#fff;
-  padding:10px 15px;
-  border-radius:12px;
-  font-size:13px;
-  opacity:0;
-  pointer-events:none;
-  transition:.22s;
-  z-index:20;
-}
-
-.toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-}
-
-/* =========================
-   手机小屏
-========================= */
-
-@media(max-width:390px){
-
-  .app{
-    padding-left:12px;
-    padding-right:12px;
-  }
-
-  .title{
-    font-size:22px;
-  }
-
-  .stats{
-    gap:7px;
-  }
-
-  .stat{
-    padding:11px 8px;
-  }
-
-  .stat b{
-    font-size:20px;
-  }
-
-  .next-main{
-    align-items:stretch;
-    flex-direction:column;
-  }
-
-  .primary{
-    width:100%;
-  }
-
-  .meal{
-    gap:9px;
-  }
-
-  .meal-btn{
-    min-width:84px;
-    padding:9px 8px;
-  }
-
-}
-</style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="app">
+<div class="container">
 
-  <section class="hero">
+  <!-- 标题 -->
+  <header>
+    <div class="logo">💊</div>
 
-    <div class="topline">
+    <div>
+      <h1>饼饼服药记录</h1>
+      <p id="currentTime">北京时间加载中...</p>
+    </div>
+  </header>
 
-      <div class="title">
-        💊 地屈孕酮吃药打卡
+
+  <!-- 地屈孕酮完成 -->
+  <section class="card completed-card">
+
+    <div class="section-title">
+      <div>
+        <span class="small-title">上一阶段</span>
+        <h2>地屈孕酮</h2>
       </div>
 
-      <div class="badge">
-        本机自动记忆
+      <span class="done-badge">
+        ✓ 已完成
+      </span>
+    </div>
+
+    <div class="medicine-summary">
+
+      <div>
+        <span>总计</span>
+        <strong>20 片</strong>
+      </div>
+
+      <div>
+        <span>完成时间</span>
+        <strong>09/17 10:33</strong>
       </div>
 
     </div>
 
-    <div class="subtitle">
-      20 顿疗程 · 每天早晚各 1 次 · 2026.09.07 晚开始
-    </div>
-
-    <!-- 本机实时时间 -->
-
-    <div class="local-time">
-
-      <div class="local-time-label">
-        🕐 本机时间
-      </div>
-
-      <div
-        class="local-time-value"
-        id="localTime">
-        正在获取时间...
-      </div>
-
-    </div>
-
-    <!-- 统计 -->
-
-    <div class="stats">
-
-      <div class="stat">
-        <b id="doneCount">8</b>
-        <span>已吃</span>
-      </div>
-
-      <div class="stat">
-        <b id="leftCount">12</b>
-        <span>剩余</span>
-      </div>
-
-      <div class="stat">
-        <b id="percent">40%</b>
-        <span>完成度</span>
-      </div>
-
-    </div>
-
-    <!-- 进度条 -->
-
-    <div class="progress-wrap">
-
-      <div class="progress-head">
-
-        <span>疗程进度</span>
-
-        <span id="progressText">
-          8 / 20 顿
-        </span>
-
-      </div>
-
-      <div class="progress">
-
-        <div
-          class="bar"
-          id="bar">
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- 下一顿 -->
-
-    <div class="next">
-
-      <small>下一顿</small>
-
-      <div class="next-main">
-
-        <div>
-
-          <div
-            class="next-title"
-            id="nextTitle">
-            🌙 9月11日 · 晚上
-          </div>
-
-          <div
-            class="next-status"
-            id="nextStatus">
-            等待时间
-          </div>
-
-        </div>
-
-        <button
-          class="primary"
-          id="nextBtn"
-          type="button">
-
-          点击打卡
-
-        </button>
-
-      </div>
-
-    </div>
+    <p class="success-text">
+      🎉 地屈孕酮阶段已经完成
+    </p>
 
   </section>
 
-  <!-- 时间轴 -->
 
-  <section class="section">
+  <!-- 等待姨妈 -->
+  <section
+    id="waitingSection"
+    class="card"
+  >
+
+    <span class="small-title">
+      当前阶段
+    </span>
+
+    <h2>🌙 等待姨妈</h2>
+
+    <p class="description">
+      从 2026/09/17 开始进入 7 天观察期。
+    </p>
+
+
+    <div class="waiting-box">
+
+      <div class="waiting-number">
+        <span id="waitingDay">
+          Day 1
+        </span>
+
+        <small>
+          观察进度
+        </small>
+      </div>
+
+
+      <div class="progress-area">
+
+        <div class="progress-bar">
+          <div
+            id="waitingProgress"
+            class="progress-fill"
+          ></div>
+        </div>
+
+        <p id="waitingText">
+          正在计算...
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="divider"></div>
+
+
+    <h3>🩸 姨妈来了吗？</h3>
+
+    <p class="hint">
+      来姨妈当天点击下面按钮，并确认实际开始日期。
+      这一天会被记录为月经 Day 1。
+    </p>
+
+
+    <button
+      class="period-button"
+      onclick="openPeriodModal()"
+    >
+      🩸 姨妈来了
+    </button>
+
+  </section>
+
+
+  <!-- 已经记录月经 -->
+  <section
+    id="periodSection"
+    class="card hidden"
+  >
+
+    <span class="small-title">
+      月经追踪
+    </span>
 
     <div class="section-title">
 
-      <h2>时间轴</h2>
+      <div>
+        <h2>🩸 本次姨妈</h2>
+      </div>
 
-      <span>每一顿独立记录</span>
+      <span
+        id="periodDayBadge"
+        class="period-badge"
+      >
+        Day 1
+      </span>
 
     </div>
 
-    <div id="timeline"></div>
+
+    <div class="info-grid">
+
+      <div class="info-box">
+        <span>开始日期</span>
+        <strong id="periodStartDisplay">
+          -
+        </strong>
+      </div>
+
+      <div class="info-box">
+        <span>今天</span>
+        <strong id="currentPeriodDay">
+          Day -
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div
+      id="day5Notice"
+      class="day5-box"
+    >
+
+      <span>💊 优思明开始日</span>
+
+      <strong id="day5Date">
+        -
+      </strong>
+
+      <p>
+        月经 Day 5
+      </p>
+
+    </div>
+
+
+    <button
+      class="secondary-button"
+      onclick="editPeriodDate()"
+    >
+      修改姨妈开始日期
+    </button>
 
   </section>
 
-  <!-- 底部说明 -->
 
-  <div class="footer">
+  <!-- 优思明 -->
+  <section
+    id="yasminSection"
+    class="card hidden"
+  >
 
-    记录保存在当前浏览器本机。<br>
+    <div class="section-title">
 
-    只有手动点击「点击打卡」才会记录为已完成。<br>
+      <div>
+        <span class="small-title">
+          下一阶段
+        </span>
 
-    系统不会在 10:00 或 22:00 自动帮你打卡。<br>
+        <h2>💊 优思明 · 21 天</h2>
+      </div>
 
-    本机时间每秒实时更新。
+      <span
+        id="yasminStatus"
+        class="medicine-badge"
+      >
+        未开始
+      </span>
+
+    </div>
+
+
+    <!-- 用药时间 -->
+    <div class="time-setting">
+
+      <div>
+        <span>每天服药时间</span>
+
+        <strong id="medicineTimeDisplay">
+          22:00
+        </strong>
+      </div>
+
+      <button
+        onclick="toggleTimeEditor()"
+      >
+        修改
+      </button>
+
+    </div>
+
+
+    <div
+      id="timeEditor"
+      class="time-editor hidden"
+    >
+
+      <input
+        id="medicineTimeInput"
+        type="time"
+        value="22:00"
+      >
+
+      <button
+        class="small-primary"
+        onclick="saveMedicineTime()"
+      >
+        保存
+      </button>
+
+    </div>
+
+
+    <!-- 统计 -->
+    <div class="medicine-stats">
+
+      <div>
+        <span>已服</span>
+        <strong id="takenCount">
+          0
+        </strong>
+        <small>/ 21</small>
+      </div>
+
+      <div>
+        <span>剩余</span>
+        <strong id="remainingCount">
+          21
+        </strong>
+        <small>片</small>
+      </div>
+
+      <div>
+        <span>进度</span>
+        <strong id="medicinePercent">
+          0%
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div class="progress-bar medicine-progress">
+      <div
+        id="medicineProgressFill"
+        class="progress-fill"
+      ></div>
+    </div>
+
+
+    <!-- 下一次 -->
+    <div
+      id="nextMedicineBox"
+      class="next-dose"
+    >
+
+      <span>下一次</span>
+
+      <strong id="nextMedicine">
+        -
+      </strong>
+
+      <p id="nextMedicineHint">
+        等待开始
+      </p>
+
+    </div>
+
+
+    <!-- Timeline -->
+    <h3 class="timeline-title">
+      21 天服药 Timeline
+    </h3>
+
+    <div id="medicineTimeline"></div>
+
+  </section>
+
+
+  <!-- 重置 -->
+  <section
+    id="resetSection"
+    class="reset-area hidden"
+  >
+
+    <button
+      class="text-button"
+      onclick="resetPeriodCycle()"
+    >
+      重新记录本次姨妈
+    </button>
+
+  </section>
+
+</div>
+
+
+<!-- 姨妈日期确认弹窗 -->
+<div
+  id="periodModal"
+  class="modal hidden"
+>
+
+  <div class="modal-card">
+
+    <div class="modal-icon">
+      🩸
+    </div>
+
+    <h2>记录姨妈开始日期</h2>
+
+    <p>
+      请选择真正开始来姨妈的日期。
+      这一天会作为 Day 1。
+    </p>
+
+
+    <label>
+      姨妈开始日期
+    </label>
+
+    <input
+      id="periodDateInput"
+      type="date"
+    >
+
+
+    <div class="modal-actions">
+
+      <button
+        class="secondary-button"
+        onclick="closePeriodModal()"
+      >
+        取消
+      </button>
+
+      <button
+        class="primary-button"
+        onclick="confirmPeriodStart()"
+      >
+        确认记录
+      </button>
+
+    </div>
 
   </div>
 
 </div>
 
-<div
-  class="toast"
-  id="toast">
-</div>
 
-<script>
-
-(function(){
-
-/* =====================================
-   基础设置
-===================================== */
-
-var STORAGE_KEY =
-  "medicineTimelineH5_v5";
-
-var TOTAL =
-  20;
-
-/*
- * 疗程开始：
- * 2026年9月7日晚上
- */
-
-var START =
-  new Date(2026,8,7);
-
-/*
- * 每天服药时间
- */
-
-var MORNING_HOUR =
-  10;
-
-var NIGHT_HOUR =
-  22;
-
-/*
- * 已经完成的初始记录
- *
- * 一共8顿
- */
-
-var INITIAL_RECORDS = [
-
-  "2026-09-07-night",
-
-  "2026-09-08-morning",
-  "2026-09-08-night",
-
-  "2026-09-09-morning",
-  "2026-09-09-night",
-
-  "2026-09-10-morning",
-  "2026-09-10-night",
-
-  "2026-09-11-morning"
-
-];
-
-/* =====================================
-   日期工具
-===================================== */
-
-function pad(n){
-
-  return n < 10
-    ? "0" + n
-    : "" + n;
-
-}
-
-function dateKey(date){
-
-  return date.getFullYear()
-    + "-"
-    + pad(date.getMonth() + 1)
-    + "-"
-    + pad(date.getDate());
-
-}
-
-function keyOf(date,period){
-
-  return dateKey(date)
-    + "-"
-    + period;
-
-}
-
-function fmtDate(date){
-
-  return (date.getMonth() + 1)
-    + "月"
-    + date.getDate()
-    + "日";
-
-}
-
-/* =====================================
-   获取本机时间
-===================================== */
-
-function now(){
-
-  return new Date();
-
-}
-
-/* =====================================
-   实时显示本机时间
-===================================== */
-
-function updateLocalTime(){
-
-  var current =
-    now();
-
-  var text =
-    current.getFullYear()
-    + "年"
-    + pad(current.getMonth() + 1)
-    + "月"
-    + pad(current.getDate())
-    + "日 "
-    + pad(current.getHours())
-    + ":"
-    + pad(current.getMinutes())
-    + ":"
-    + pad(current.getSeconds());
-
-  var el =
-    document.getElementById(
-      "localTime"
-    );
-
-  if(el){
-
-    el.textContent =
-      text;
-
-  }
-
-}
-
-/*
- * 页面打开立即显示
- */
-
-updateLocalTime();
-
-/*
- * 每秒更新一次
- */
-
-setInterval(
-  updateLocalTime,
-  1000
-);
-
-/* =====================================
-   判断某顿是否已经到时间
-===================================== */
-
-function isAvailable(item){
-
-  var current =
-    now();
-
-  var itemDate =
-    new Date(item.date);
-
-  /*
-   * 未来日期
-   */
-
-  if(
-    dateKey(itemDate)
-    >
-    dateKey(current)
-  ){
-
-    return false;
-
-  }
-
-  /*
-   * 过去日期
-   *
-   * 过去的药不会自动打卡。
-   * 只是允许用户补打卡。
-   */
-
-  if(
-    dateKey(itemDate)
-    <
-    dateKey(current)
-  ){
-
-    return true;
-
-  }
-
-  /*
-   * 今天早上
-   */
-
-  if(
-    item.period
-    ===
-    "morning"
-  ){
-
-    return current.getHours()
-      >=
-      MORNING_HOUR;
-
-  }
-
-  /*
-   * 今天晚上
-   */
-
-  if(
-    item.period
-    ===
-    "night"
-  ){
-
-    return current.getHours()
-      >=
-      NIGHT_HOUR;
-
-  }
-
-  return false;
-
-}
-
-/* =====================================
-   判断是否未来
-===================================== */
-
-function isFuture(item){
-
-  var current =
-    now();
-
-  var itemDate =
-    new Date(item.date);
-
-  /*
-   * 日期未来
-   */
-
-  if(
-    dateKey(itemDate)
-    >
-    dateKey(current)
-  ){
-
-    return true;
-
-  }
-
-  /*
-   * 今天但时间未到
-   */
-
-  if(
-    dateKey(itemDate)
-    ===
-    dateKey(current)
-  ){
-
-    if(
-      item.period
-      ===
-      "morning"
-      &&
-      current.getHours()
-      <
-      MORNING_HOUR
-    ){
-
-      return true;
-
-    }
-
-    if(
-      item.period
-      ===
-      "night"
-      &&
-      current.getHours()
-      <
-      NIGHT_HOUR
-    ){
-
-      return true;
-
-    }
-
-  }
-
-  return false;
-
-}
-
-/* =====================================
-   本机存储
-===================================== */
-
-function load(){
-
-  try{
-
-    var raw =
-      localStorage.getItem(
-        STORAGE_KEY
-      );
-
-    if(raw){
-
-      var parsed =
-        JSON.parse(raw);
-
-      if(
-        Array.isArray(parsed)
-      ){
-
-        return parsed;
-
-      }
-
-    }
-
-  }catch(e){
-
-    console.log(
-      "读取本地记录失败:",
-      e
-    );
-
-  }
-
-  /*
-   * 第一次打开
-   */
-
-  var initial =
-    INITIAL_RECORDS.slice();
-
-  save(initial);
-
-  return initial;
-
-}
-
-function save(data){
-
-  try{
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(data)
-    );
-
-  }catch(e){
-
-    console.log(
-      "保存本地记录失败:",
-      e
-    );
-
-  }
-
-}
-
-/* =====================================
-   建立20顿疗程
-===================================== */
-
-function buildPlan(){
-
-  var list = [];
-
-  var n = 0;
-
-  var d =
-    new Date(START);
-
-  /*
-   * 第1顿：
-   * 9月7日晚上
-   */
-
-  list.push({
-
-    date:new Date(d),
-
-    period:"night",
-
-    label:"晚上",
-
-    emoji:"🌙",
-
-    key:keyOf(
-      d,
-      "night"
-    ),
-
-    n:++n
-
-  });
-
-  /*
-   * 第2顿开始：
-   * 9月8日早上
-   *
-   * 这里必须是 i <= 10
-   *
-   * 9月8日 → 9月17日
-   * 共10天
-   *
-   * 每天早晚两顿
-   * 最终：
-   * 第20顿 = 9月17日早上
-   */
-
-  for(
-    var i = 1;
-    i <= 10;
-    i++
-  ){
-
-    d =
-      new Date(START);
-
-    d.setDate(
-      START.getDate()
-      +
-      i
-    );
-
-    list.push({
-
-      date:new Date(d),
-
-      period:"morning",
-
-      label:"早上",
-
-      emoji:"🌅",
-
-      key:keyOf(
-        d,
-        "morning"
-      ),
-
-      n:++n
-
-    });
-
-    list.push({
-
-      date:new Date(d),
-
-      period:"night",
-
-      label:"晚上",
-
-      emoji:"🌙",
-
-      key:keyOf(
-        d,
-        "night"
-      ),
-
-      n:++n
-
-    });
-
-  }
-
-  /*
-   * 注意：
-   * 上面会生成：
-   *
-   * 第1顿  9/7 晚
-   * 第2顿  9/8 早
-   * 第3顿  9/8 晚
-   * ...
-   * 第19顿 9/16 晚
-   * 第20顿 9/17 早
-   *
-   * 但是最后一次循环的 9/17 晚
-   * 是第21顿，所以需要删除它。
-   */
-
-  if(list.length > TOTAL){
-
-    list = list.slice(
-      0,
-      TOTAL
-    );
-
-  }
-
-  return list;
-
-}
-
-var plan =
-  buildPlan();
-
-/* =====================================
-   Toast
-===================================== */
-
-function toast(msg){
-
-  var el =
-    document.getElementById(
-      "toast"
-    );
-
-  el.textContent =
-    msg;
-
-  el.classList.add(
-    "show"
-  );
-
-  clearTimeout(
-    window.__toastTimer
-  );
-
-  window.__toastTimer =
-    setTimeout(
-      function(){
-
-        el.classList.remove(
-          "show"
-        );
-
-      },
-      1700
-    );
-
-}
-
-/* =====================================
-   手动打卡
-===================================== */
-
-function mark(key){
-
-  var data =
-    load();
-
-  /*
-   * 已经打卡
-   */
-
-  if(
-    data.indexOf(key)
-    >=
-    0
-  ){
-
-    toast(
-      "这一顿已经记录过了"
-    );
-
-    return;
-
-  }
-
-  /*
-   * 找到对应记录
-   */
-
-  var item =
-    null;
-
-  for(
-    var i = 0;
-    i < plan.length;
-    i++
-  ){
-
-    if(
-      plan[i].key
-      ===
-      key
-    ){
-
-      item =
-        plan[i];
-
-      break;
-
-    }
-
-  }
-
-  /*
-   * 还没到时间
-   */
-
-  if(
-    item
-    &&
-    !isAvailable(item)
-  ){
-
-    if(
-      item.period
-      ===
-      "morning"
-    ){
-
-      toast(
-        "早上这一顿还没到10:00"
-      );
-
-    }else{
-
-      toast(
-        "晚上这一顿还没到22:00"
-      );
-
-    }
-
-    return;
-
-  }
-
-  /*
-   * 保存
-   */
-
-  data.push(key);
-
-  save(data);
-
-  /*
-   * 重新渲染
-   */
-
-  render();
-
-  toast(
-    "已记录这顿药 ✓"
-  );
-
-}
-
-/* =====================================
-   找到下一顿
-===================================== */
-
-function findNext(data){
-
-  /*
-   * 第一优先：
-   * 已经到时间但没有打卡
-   *
-   * 如果之前漏打，
-   * 不会直接跳过。
-   */
-
-  for(
-    var i = 0;
-    i < plan.length;
-    i++
-  ){
-
-    if(
-      data.indexOf(
-        plan[i].key
-      )
-      <
-      0
-      &&
-      isAvailable(
-        plan[i]
-      )
-    ){
-
-      return plan[i];
-
-    }
-
-  }
-
-  /*
-   * 第二优先：
-   * 最近的一顿未来药
-   */
-
-  for(
-    var j = 0;
-    j < plan.length;
-    j++
-  ){
-
-    if(
-      data.indexOf(
-        plan[j].key
-      )
-      <
-      0
-    ){
-
-      return plan[j];
-
-    }
-
-  }
-
-  return null;
-
-}
-
-/* =====================================
-   下一顿状态文字
-===================================== */
-
-function getNextStatus(item){
-
-  if(!item){
-
-    return "20顿疗程已全部完成";
-
-  }
-
-  /*
-   * 已经可以吃
-   */
-
-  if(
-    isAvailable(item)
-  ){
-
-    if(
-      item.period
-      ===
-      "morning"
-    ){
-
-      return "已经到10:00，可以手动打卡";
-
-    }
-
-    return "已经到22:00，可以手动打卡";
-
-  }
-
-  /*
-   * 未来日期
-   */
-
-  var current =
-    now();
-
-  if(
-    dateKey(item.date)
-    >
-    dateKey(current)
-  ){
-
-    if(
-      item.period
-      ===
-      "morning"
-    ){
-
-      return fmtDate(item.date)
-        + " 10:00后可以打卡";
-
-    }
-
-    return fmtDate(item.date)
-      + " 22:00后可以打卡";
-
-  }
-
-  /*
-   * 今天早上还没到10点
-   */
-
-  if(
-    item.period
-    ===
-    "morning"
-  ){
-
-    return "今天10:00后可以打卡";
-
-  }
-
-  /*
-   * 今天晚上还没到22点
-   */
-
-  return "今天22:00后可以打卡";
-
-}
-
-/* =====================================
-   页面渲染
-===================================== */
-
-function render(){
-
-  var data =
-    load();
-
-  /*
-   * 统计
-   */
-
-  var doneCount =
-    data.length;
-
-  var left =
-    Math.max(
-      0,
-      TOTAL - doneCount
-    );
-
-  var pct =
-    Math.round(
-      doneCount
-      /
-      TOTAL
-      *
-      100
-    );
-
-  document.getElementById(
-    "doneCount"
-  ).textContent =
-    doneCount;
-
-  document.getElementById(
-    "leftCount"
-  ).textContent =
-    left;
-
-  document.getElementById(
-    "percent"
-  ).textContent =
-    pct + "%";
-
-  document.getElementById(
-    "progressText"
-  ).textContent =
-    doneCount
-    +
-    " / "
-    +
-    TOTAL
-    +
-    " 顿";
-
-  document.getElementById(
-    "bar"
-  ).style.width =
-    pct + "%";
-
-  /*
-   * 下一顿
-   */
-
-  var next =
-    findNext(data);
-
-  var nextTitle =
-    document.getElementById(
-      "nextTitle"
-    );
-
-  var nextStatus =
-    document.getElementById(
-      "nextStatus"
-    );
-
-  var nextBtn =
-    document.getElementById(
-      "nextBtn"
-    );
-
-  if(next){
-
-    nextTitle.textContent =
-      next.emoji
-      +
-      " "
-      +
-      fmtDate(next.date)
-      +
-      " · "
-      +
-      next.label;
-
-    nextStatus.textContent =
-      getNextStatus(next);
-
-    /*
-     * 到时间
-     */
-
-    if(
-      isAvailable(next)
-    ){
-
-      nextBtn.disabled =
-        false;
-
-      nextBtn.textContent =
-        "点击打卡";
-
-      nextBtn.onclick =
-        function(){
-
-          mark(
-            next.key
-          );
-
-        };
-
-    }
-
-    /*
-     * 没到时间
-     */
-
-    else{
-
-      nextBtn.disabled =
-        true;
-
-      nextBtn.textContent =
-        "未开始";
-
-      nextBtn.onclick =
-        null;
-
-    }
-
-  }
-
-  /*
-   * 全部完成
-   */
-
-  else{
-
-    nextTitle.textContent =
-      "🎉 20顿全部完成";
-
-    nextStatus.textContent =
-      "疗程已完成";
-
-    nextBtn.disabled =
-      true;
-
-    nextBtn.textContent =
-      "已完成";
-
-    nextBtn.onclick =
-      null;
-
-  }
-
-  /*
-   * =====================================
-   * 时间轴
-   * =====================================
-   */
-
-  var timeline =
-    document.getElementById(
-      "timeline"
-    );
-
-  var html = "";
-
-  var currentDate =
-    "";
-
-  for(
-    var j = 0;
-    j < plan.length;
-    j++
-  ){
-
-    var item =
-      plan[j];
-
-    var dk =
-      dateKey(
-        item.date
-      );
-
-    /*
-     * 日期标题
-     */
-
-    if(
-      dk
-      !==
-      currentDate
-    ){
-
-      if(currentDate){
-
-        html +=
-          "</div>";
-
-      }
-
-      currentDate =
-        dk;
-
-      var current =
-        now();
-
-      var isToday =
-        dk
-        ===
-        dateKey(current);
-
-      html +=
-        '<div class="day">';
-
-      html +=
-        '<div class="day-head">'
-        +
-        '<b>'
-        +
-        fmtDate(
-          item.date
-        )
-        +
-        '</b>'
-        +
-        (
-          isToday
-          ?
-          '<span class="today-pill">今天</span>'
-          :
-          ''
-        )
-        +
-        '</div>';
-
-    }
-
-    /*
-     * 当前状态
-     */
-
-    var isDone =
-      data.indexOf(
-        item.key
-      )
-      >=
-      0;
-
-    var future =
-      isFuture(
-        item
-      );
-
-    var mealClass =
-      "meal "
-      +
-      (
-        isDone
-        ?
-        "done "
-        :
-        ""
-      )
-      +
-      (
-        future
-        ?
-        "locked"
-        :
-        ""
-      );
-
-    html +=
-      '<div class="'
-      +
-      mealClass
-      +
-      '">';
-
-    /*
-     * 图标
-     */
-
-    html +=
-      '<div class="dot">'
-      +
-      item.emoji
-      +
-      '</div>';
-
-    /*
-     * 信息
-     */
-
-    html +=
-      '<div class="meal-info">';
-
-    html +=
-      '<div class="meal-name">'
-      +
-      '第'
-      +
-      item.n
-      +
-      '顿 · '
-      +
-      item.label
-      +
-      '</div>';
-
-    /*
-     * 时间提示
-     */
-
-    var metaText;
-
-    if(future){
-
-      if(
-        dk
-        ===
-        dateKey(now())
-      ){
-
-        if(
-          item.period
-          ===
-          "morning"
-        ){
-
-          metaText =
-            "10:00 后开始";
-
-        }else{
-
-          metaText =
-            "22:00 后开始";
-
-        }
-
-      }else{
-
-        metaText =
-          "尚未到时间";
-
-      }
-
-    }else{
-
-      if(
-        dk
-        ===
-        dateKey(now())
-      ){
-
-        metaText =
-          "今天";
-
-      }else{
-
-        metaText =
-          "疗程计划";
-
-      }
-
-    }
-
-    html +=
-      '<div class="meal-meta">'
-      +
-      metaText
-      +
-      '</div>';
-
-    /*
-     * 状态
-     */
-
-    html +=
-      '<div class="meal-status">'
-      +
-      (
-        isDone
-        ?
-        "✓ 已完成"
-        :
-        (
-          future
-          ?
-          "未开始"
-          :
-          "未完成"
-        )
-      )
-      +
-      '</div>';
-
-    html +=
-      '</div>';
-
-    /*
-     * 按钮
-     */
-
-    var btnText;
-
-    if(isDone){
-
-      btnText =
-        "✓ 已完成";
-
-    }else if(future){
-
-      btnText =
-        "未开始";
-
-    }else{
-
-      btnText =
-        "点击打卡";
-
-    }
-
-    html +=
-      '<button '
-      +
-      'type="button" '
-      +
-      'class="meal-btn '
-      +
-      (
-        isDone
-        ?
-        "done"
-        :
-        ""
-      )
-      +
-      '" '
-      +
-      'data-key="'
-      +
-      item.key
-      +
-      '" '
-      +
-      (
-        future
-        ||
-        isDone
-        ?
-        "disabled"
-        :
-        ""
-      )
-      +
-      '>'
-      +
-      btnText
-      +
-      '</button>';
-
-    html +=
-      '</div>';
-
-  }
-
-  if(currentDate){
-
-    html +=
-      "</div>";
-
-  }
-
-  timeline.innerHTML =
-    html;
-
-  /*
-   * 绑定按钮
-   */
-
-  var buttons =
-    timeline.querySelectorAll(
-      ".meal-btn"
-    );
-
-  for(
-    var k = 0;
-    k < buttons.length;
-    k++
-  ){
-
-    buttons[k].addEventListener(
-      "click",
-      function(){
-
-        var key =
-          this.getAttribute(
-            "data-key"
-          );
-
-        mark(key);
-
-      }
-    );
-
-  }
-
-}
-
-/* =====================================
-   页面启动
-===================================== */
-
-render();
-
-/*
- * 每分钟重新检查服药状态
- */
-
-setInterval(
-  function(){
-
-    render();
-
-  },
-  60 * 1000
-);
-
-})();
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
-```
