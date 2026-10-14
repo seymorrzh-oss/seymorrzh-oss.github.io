@@ -898,13 +898,7 @@ function getYasminStart() {
 
 function renderYasmin() {
 
-  if (
-    !state.periodStart
-  ) {
-
-    return;
-
-  }
+  if (!getYasminStart()) { return; }
 
 
   const start =
@@ -1373,7 +1367,14 @@ function loadState() {
       result.cycles = saved.periodStart || Object.keys(saved.yasminTaken || {}).length ? [{id:1,periodStart:saved.periodStart || null,yasminStart:validDate(saved.periodStart)?addDays(saved.periodStart,4):null,yasminTaken:{...(saved.yasminTaken || {})}}] : [];
     }
     result.cycles = result.cycles.map((c,i)=>({...c,id:c.id || i+1,yasminTaken:{...(c.yasminTaken || {})},yasminStart:c.yasminStart || (validDate(c.periodStart)?addDays(c.periodStart,4):null)}));
-    result.schemaVersion = 4;
+    if (!result.confirmedFirstCourse20261013) {
+ let first=result.cycles.find(c=>Number(c.id)===1);
+ if(!first){first={id:1,periodStart:null,yasminTaken:{}};result.cycles.unshift(first);}
+ first.yasminStart='2026-09-23';first.lastMedicineDate='2026-10-13';
+ for(let n=1;n<=21;n++) if(!isTaken(first.yasminTaken[n])) first.yasminTaken[n]={taken:true,source:'user-confirmed-history'};
+ first.status='completed';result.confirmedFirstCourse20261013=true;
+}
+result.schemaVersion = 4;
     if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(result.medicineTime)) result.medicineTime='22:00';
     return result;
   } catch (error) {
@@ -1441,8 +1442,8 @@ function renderWaiting() {
   const end=addDays(start,6), today=getBeijingNow().date;
   const elapsed=daysBetween(start,today);
   const day=Math.min(7,Math.max(0,elapsed+1));
-  document.getElementById('waitingTitle').textContent=endDose?'🌙 停药观察期':'🌙 等待姨妈';
-  document.getElementById('observationDates').textContent=endDose?`Cycle ${c.id} 已完成，最后服药日不计入停药观察天数。`:'地屈孕酮完成后的观察记录';
+  document.getElementById('waitingTitle').textContent=endDose?`🌙 Cycle ${Number(c.id)+1} · 停药观察期`:'🌙 等待姨妈';
+  document.getElementById('observationDates').textContent=endDose?`Cycle ${c.id} 优思明已完成。记录本次出血 Day 1 后，生成 Cycle ${Number(c.id)+1} 的 21 天服药计划（Day 5 开始）。`:'地屈孕酮完成后的观察记录';
   document.getElementById('lastMedicineDisplay').textContent=endDose || '2026-09-17 10:33';
   document.getElementById('observationStartDisplay').textContent=start;
   document.getElementById('observationEndDisplay').textContent=end;
@@ -1461,16 +1462,16 @@ function renderAll() {
   state.periodStart=legacyPeriod; state.yasminTaken=legacyTaken;
   const complete=c && doseCount(c)===21;
   document.getElementById('waitingSection').classList.toggle('hidden',!!c && !complete);
-  document.getElementById('currentCycleTitle').textContent=c?`Cycle ${c.id}`:'等待首个疗程';
+  document.getElementById('currentCycleTitle').textContent=c?`Cycle ${complete?Number(c.id)+1:c.id}`:'等待首个疗程';
   const today=getBeijingNow().date;
-  const summary=!c?'等待记录月经 Day 1':complete?'🌙 停药观察期 · '+document.getElementById('waitingDay').textContent:today<c.yasminStart?`等待开始 · ${c.yasminStart}（月经 Day 5） · 还有 ${daysBetween(today,c.yasminStart)} 天`:`💊 Day ${Math.min(21,Math.max(1,daysBetween(c.yasminStart,today)+1))} / 21 · 每天 ${state.medicineTime} · 已服 ${doseCount(c)} 片`;
+  const summary=!c?'等待记录月经 Day 1':complete?'🌙 下一疗程前的停药观察期 · '+document.getElementById('waitingDay').textContent:today<c.yasminStart?`等待开始 · ${c.yasminStart}（月经 Day 5） · 还有 ${daysBetween(today,c.yasminStart)} 天`:`💊 Day ${Math.min(21,Math.max(1,daysBetween(c.yasminStart,today)+1))} / 21 · 每天 ${state.medicineTime} · 已服 ${doseCount(c)} 片`;
   document.getElementById('currentCycleState').textContent=summary;
   if(c){
     document.getElementById('yasminCycleTitle').textContent=`💊 优思明 Cycle ${c.id} · 21 天`;
     if(complete){document.getElementById('nextMedicine').textContent=`🎉 Cycle ${c.id} 完成`;document.getElementById('nextMedicineHint').textContent='进入 7 天停药观察窗口';}
     document.querySelectorAll('#medicineTimeline .check-button').forEach((b,i)=>{b.disabled=!isTaken(c.yasminTaken[i+1]) && addDays(c.yasminStart,i)>today;});
   }
-  const history=document.getElementById('cycleHistory'); history.replaceChildren();
+  const history=document.getElementById('cycleHistory'); history.replaceChildren(); const baseline=document.createElement('p'); baseline.className='hint'; baseline.textContent='Cycle 0 · 地屈孕酮 · 2026/09/07–2026/09/17 · ✓ 已完成（详细记录见上方）'; history.append(baseline);
   state.cycles.forEach(x=>{
     const item=document.createElement('details'); item.className='cycle-history-item';
     const title=document.createElement('summary'); title.textContent=`Cycle ${x.id} · ${doseCount(x)===21?'✓ 已完成':'进行中'} · ${doseCount(x)}/21`;
@@ -1478,6 +1479,20 @@ function renderAll() {
     item.append(title,p);
     const records=document.createElement('p');records.textContent=Array.from({length:21},(_,i)=>`${i+1}：${isTaken(x.yasminTaken[i+1])?'✓ 已服':'未打卡'}`).join(' · '); item.append(records); history.append(item);
   });
+}
+function getYasminStart(){const c=currentCycle();return c?c.yasminStart:null;}
+function renderPeriod(){
+ const c=currentCycle(), hasPeriod=c && validDate(c.periodStart);
+ document.getElementById('periodSection').classList.toggle('hidden',!hasPeriod);
+ document.getElementById('yasminSection').classList.toggle('hidden',!c || !c.yasminStart);
+ document.getElementById('resetSection').classList.toggle('hidden',!hasPeriod);
+ if(hasPeriod){
+ const day=Math.max(1,daysBetween(c.periodStart,getBeijingNow().date)+1);
+ document.getElementById('periodStartDisplay').textContent=prettyDate(c.periodStart);
+ document.getElementById('currentPeriodDay').textContent='Day '+day;
+ document.getElementById('periodDayBadge').textContent='Day '+day;
+ document.getElementById('day5Date').textContent=prettyDate(c.yasminStart);
+ }
 }
 var storageBlocked;
 var periodEditing=false;
