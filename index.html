@@ -21,7 +21,7 @@
       <h1>饼饼服药记录</h1>
       <p id="currentTime">北京时间加载中...</p>
     </div>
-  </header>
+  </header><section class="card current-card"><span class="small-title">当前治疗状态</span><h2 id="currentCycleTitle"></h2><p id="currentCycleState" class="description" aria-live="polite"></p></section>
 
 
   <!-- =========================
@@ -191,10 +191,10 @@
       第二阶段 · 当前
     </span>
 
-    <h2>🌙 等待姨妈</h2>
+    <h2 id="waitingTitle">🌙 等待姨妈</h2>
 
     <p class="description">
-      从 2026/09/17 开始进入 7 天观察期。
+      <span id="observationDates"></span>
     </p>
 
 
@@ -362,7 +362,7 @@
         </span>
 
         <h2>
-          💊 优思明 · 21 天
+          <span id="yasminCycleTitle">💊 优思明 · 21 天</span>
         </h2>
 
       </div>
@@ -511,7 +511,7 @@
   class="modal hidden"
 >
 
-  <div class="modal-card">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-label="记录出血开始日期">
 
     <div class="modal-icon">
       🩸
@@ -561,7 +561,7 @@
 </div>
 
 
-<script src="app.js"></script>
+<div class="container"><section class="card"><details><summary>📋 治疗历史</summary><div id="cycleHistory"></div></details></section></div><script src="app.js"></script>
 
 </body>
 </html>

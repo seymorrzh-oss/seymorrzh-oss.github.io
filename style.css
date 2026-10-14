@@ -1051,4 +1051,10 @@ h3 {
     font-size: 11px;
   }
 
-}
+}/* v4：延续原来的粉白卡片 */
+.current-card { background: linear-gradient(135deg,#fff1f5,#fff); }
+summary { cursor: pointer; color: #a66d7e; font-weight: 600; padding: 4px 0; }
+.cycle-history-item { margin-top: 14px; border-top: 1px solid #f1eaec; padding-top: 12px; }
+.cycle-history-item p { font-size: 13px; color: #8f8387; line-height: 1.7; }
+button:disabled { opacity: .45; cursor: default; }
+button:focus-visible, summary:focus-visible { outline: 2px solid #c25878; outline-offset: 3px; }

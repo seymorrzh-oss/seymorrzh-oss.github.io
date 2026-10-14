@@ -927,7 +927,7 @@ function renderYasmin() {
     Object.values(
       state.yasminTaken
     )
-      .filter(Boolean)
+      .filter(isTaken)
       .length;
 
 
@@ -1039,9 +1039,9 @@ function renderYasmin() {
 
 
     const taken =
-      !!state.yasminTaken[
+      isTaken(state.yasminTaken[
         doseNumber
-      ];
+      ]);
 
 
     if (
@@ -1240,9 +1240,7 @@ function toggleDose(
 ) {
 
   const currentlyTaken =
-    !!state.yasminTaken[
-      number
-    ];
+    isTaken(state.yasminTaken[number]);
 
 
   if (currentlyTaken) {
@@ -1346,10 +1344,145 @@ function renderAll() {
 }
 
 
+/* v4: cycles 为唯一疗程来源；旧字段保留为 Cycle 1 兼容快照。 */
+function validDate(value) {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && formatDate(parseDate(value)) === value;
+}
+function isTaken(value) { return !!value && (typeof value !== "object" || value.taken !== false); }
+function doseCount(c) { return Array.from({length:21},(_,i)=>i+1).filter(i=>isTaken(c.yasminTaken[i])).length; }
+function currentCycle() { return state.cycles[state.cycles.length-1] || null; }
+function completionDate(c) {
+  if (doseCount(c) !== 21) return null;
+  if (validDate(c.lastMedicineDate)) return c.lastMedicineDate;
+  const last = c.yasminTaken[21];
+  const timestamp = last && last.checkedAt;
+  if (timestamp && Number.isFinite(Date.parse(timestamp))) {
+    const parts = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(timestamp));
+    const v = Object.fromEntries(parts.map(p=>[p.type,p.value]));
+    return `${v.year}-${v.month}-${v.day}`;
+  }
+  return c.yasminStart ? addDays(c.yasminStart,20) : null;
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const saved = raw ? JSON.parse(raw) : {};
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) throw Error('数据格式异常');
+    const result = {...defaultState(),...saved};
+    if (!Array.isArray(result.cycles)) {
+      result.cycles = saved.periodStart || Object.keys(saved.yasminTaken || {}).length ? [{id:1,periodStart:saved.periodStart || null,yasminStart:validDate(saved.periodStart)?addDays(saved.periodStart,4):null,yasminTaken:{...(saved.yasminTaken || {})}}] : [];
+    }
+    result.cycles = result.cycles.map((c,i)=>({...c,id:c.id || i+1,yasminTaken:{...(c.yasminTaken || {})},yasminStart:c.yasminStart || (validDate(c.periodStart)?addDays(c.periodStart,4):null)}));
+    result.schemaVersion = 4;
+    if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(result.medicineTime)) result.medicineTime='22:00';
+    return result;
+  } catch (error) {
+    storageBlocked = true;
+    alert('原有本地数据无法读取。为保护记录，页面不会覆盖它。请先备份浏览器中的原数据。');
+    return {...defaultState(),cycles:[]};
+  }
+}
+function saveState() {
+  if (storageBlocked) return false;
+  try { state.cycles.forEach(c=>{ c.status=doseCount(c)===21?'completed':'active'; if(c.status==='completed') c.lastMedicineDate=completionDate(c); }); localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); return true; }
+  catch { alert('保存失败，请检查浏览器存储空间或权限；本次操作未保存。'); return false; }
+}
+function commitChange(change) {
+  const previous=JSON.stringify(state);
+  change();
+  if (!saveState()) { state=JSON.parse(previous); renderAll(); return false; }
+  renderAll(); return true;
+}
+function openPeriodModal(edit=false) {
+  periodEditing = edit === true;
+  const c=currentCycle();
+  const input=document.getElementById('periodDateInput');
+  input.value=periodEditing && c ? c.periodStart : getBeijingNow().date;
+  input.max=getBeijingNow().date;
+  input.min=!periodEditing && c ? completionDate(c) || '' : '';
+  document.getElementById('periodModal').classList.remove('hidden');
+  input.focus();
+}
+function editPeriodDate() { openPeriodModal(true); }
+function resetPeriodCycle() { openPeriodModal(true); }
+function confirmPeriodStart() {
+  const date=document.getElementById('periodDateInput').value;
+  const c=currentCycle();
+  if (!validDate(date) || date>getBeijingNow().date) return alert('请选择不晚于今天的有效日期');
+  if (!periodEditing && c && (doseCount(c)!==21 || !completionDate(c))) return alert('请先完成当前疗程');
+  const previous=periodEditing ? state.cycles[state.cycles.length-2] : c;
+  if (previous && completionDate(previous) && date<completionDate(previous)) return alert('本次出血日期不能早于上一疗程最后服药日期');
+  if (periodEditing && c && date!==c.periodStart && doseCount(c)>0 && !confirm('修改日期会重新计算计划日期，已有每片打卡和实际打卡时间将保留。确定修改吗？')) return;
+  if (commitChange(()=>{
+    if (periodEditing && c) { c.periodStart=date; c.yasminStart=addDays(date,4); }
+    else state.cycles.push({id:Math.max(0,...state.cycles.map(x=>Number(x.id)||0))+1,periodStart:date,yasminStart:addDays(date,4),yasminTaken:{},status:'active'});
+  })) closePeriodModal();
+}
+function toggleDose(number) {
+  const c=currentCycle();
+  if (!c || number<1 || number>21) return;
+  const taken=isTaken(c.yasminTaken[number]);
+  if (!taken && addDays(c.yasminStart,number-1)>getBeijingNow().date) return alert('尚未到该片计划日期');
+  if (taken && !confirm(`确定取消第 ${number} 片的打卡吗？`)) return;
+  commitChange(()=>{
+    if (taken) { delete c.yasminTaken[number]; delete c.lastMedicineDate; }
+    else c.yasminTaken[number]={taken:true,checkedAt:new Date().toISOString()};
+    if (doseCount(c)===21) c.lastMedicineDate=completionDate(c);
+  });
+}
+function saveMedicineTime() {
+  const value=document.getElementById('medicineTimeInput').value;
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) return alert('请选择有效服药时间');
+  if (commitChange(()=>{state.medicineTime=value;})) document.getElementById('timeEditor').classList.add('hidden');
+}
+function renderWaiting() {
+  const c=currentCycle(), endDose=c?completionDate(c):null;
+  const start=endDose?addDays(endDose,1):WAITING_START;
+  const end=addDays(start,6), today=getBeijingNow().date;
+  const elapsed=daysBetween(start,today);
+  const day=Math.min(7,Math.max(0,elapsed+1));
+  document.getElementById('waitingTitle').textContent=endDose?'🌙 停药观察期':'🌙 等待姨妈';
+  document.getElementById('observationDates').textContent=`${endDose?`Cycle ${c.id} 已完成 · 最后一片：${endDose}。`:''}观察窗口：${start} ～ ${end}`;
+  document.getElementById('waitingDay').textContent=`Day ${day} / 7`;
+  document.getElementById('waitingProgress').style.width=`${day/7*100}%`;
+  document.getElementById('waitingText').textContent=today>end?'7 天观察窗口已结束，仍可记录出血日期':today<start?'明天进入观察窗口':`等待撤退性出血 · 距窗口结束 ${Math.max(0,daysBetween(today,end))} 天`;
+}
+function renderAll() {
+  const c=currentCycle();
+  /* 临时兼容原有渲染函数；存储时仍保留旧字段的原值。 */
+  const legacyPeriod=state.periodStart, legacyTaken=state.yasminTaken;
+  state.periodStart=c?c.periodStart:null;
+  state.yasminTaken=c?c.yasminTaken:{};
+  renderWaiting(); renderPeriod();
+  if(c && c.yasminStart) renderYasmin();
+  state.periodStart=legacyPeriod; state.yasminTaken=legacyTaken;
+  const complete=c && doseCount(c)===21;
+  document.getElementById('waitingSection').classList.toggle('hidden',!!c && !complete);
+  document.getElementById('currentCycleTitle').textContent=c?`Cycle ${c.id}`:'等待首个疗程';
+  const today=getBeijingNow().date;
+  const summary=!c?'等待记录月经 Day 1':complete?'🌙 停药观察期 · '+document.getElementById('waitingDay').textContent:today<c.yasminStart?`等待开始 · ${c.yasminStart}（月经 Day 5） · 还有 ${daysBetween(today,c.yasminStart)} 天`:`💊 Day ${Math.min(21,Math.max(1,daysBetween(c.yasminStart,today)+1))} / 21 · 每天 ${state.medicineTime} · 已服 ${doseCount(c)} 片`;
+  document.getElementById('currentCycleState').textContent=summary;
+  if(c){
+    document.getElementById('yasminCycleTitle').textContent=`💊 优思明 Cycle ${c.id} · 21 天`;
+    if(complete){document.getElementById('nextMedicine').textContent=`🎉 Cycle ${c.id} 完成`;document.getElementById('nextMedicineHint').textContent='进入 7 天停药观察窗口';}
+    document.querySelectorAll('#medicineTimeline .check-button').forEach((b,i)=>{b.disabled=!isTaken(c.yasminTaken[i+1]) && addDays(c.yasminStart,i)>today;});
+  }
+  const history=document.getElementById('cycleHistory'); history.replaceChildren();
+  state.cycles.forEach(x=>{
+    const item=document.createElement('details'); item.className='cycle-history-item';
+    const title=document.createElement('summary'); title.textContent=`Cycle ${x.id} · ${doseCount(x)===21?'✓ 已完成':'进行中'} · ${doseCount(x)}/21`;
+    const p=document.createElement('p');p.textContent=`月经 Day 1：${x.periodStart || '未记录'} · 优思明：${x.yasminStart || '待确认'} ～ ${completionDate(x) || '进行中'}`;
+    item.append(title,p);
+    const records=document.createElement('p');records.textContent=Array.from({length:21},(_,i)=>`${i+1}：${isTaken(x.yasminTaken[i+1])?'✓ 已服':'未打卡'}`).join(' · '); item.append(records); history.append(item);
+  });
+}
+var storageBlocked;
+var periodEditing=false;
 /* =========================================================
    初始化
 ========================================================= */
 
+saveState();
 renderAll();
 
 
@@ -1357,3 +1490,5 @@ setInterval(
   renderAll,
   60000
 );
+
+
