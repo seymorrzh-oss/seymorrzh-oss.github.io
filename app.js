@@ -1442,7 +1442,10 @@ function renderWaiting() {
   const elapsed=daysBetween(start,today);
   const day=Math.min(7,Math.max(0,elapsed+1));
   document.getElementById('waitingTitle').textContent=endDose?'🌙 停药观察期':'🌙 等待姨妈';
-  document.getElementById('observationDates').textContent=`${endDose?`Cycle ${c.id} 已完成 · 最后一片：${endDose}。`:''}观察窗口：${start} ～ ${end}`;
+  document.getElementById('observationDates').textContent=endDose?`Cycle ${c.id} 已完成，最后服药日不计入停药观察天数。`:'地屈孕酮完成后的观察记录';
+  document.getElementById('lastMedicineDisplay').textContent=endDose || '2026-09-17 10:33';
+  document.getElementById('observationStartDisplay').textContent=start;
+  document.getElementById('observationEndDisplay').textContent=end;
   document.getElementById('waitingDay').textContent=`Day ${day} / 7`;
   document.getElementById('waitingProgress').style.width=`${day/7*100}%`;
   document.getElementById('waitingText').textContent=today>end?'7 天观察窗口已结束，仍可记录出血日期':today<start?'明天进入观察窗口':`等待撤退性出血 · 距窗口结束 ${Math.max(0,daysBetween(today,end))} 天`;
@@ -1490,5 +1493,6 @@ setInterval(
   renderAll,
   60000
 );
+
 
 
